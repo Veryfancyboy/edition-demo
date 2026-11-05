@@ -495,7 +495,7 @@ function bindAddBtn(k){ const b=document.getElementById('addDoor'); if(b) b.oncl
 function investBody(){
   return `<section><div class="sec-t">투자 현황판 (실시간)</div><div class="kpi" id="ivK"><div class="loading">계산 중…</div></div></section>
   <section><div class="sec-t">생산 자금이 필요한 에디션</div><p class="tiny">선주문 대금은 받는 사람이 배송을 확인한 뒤 정산돼요. 그 전에 공장에 줄 생산비(착수금·잔금)를 투자자가 채워요. 필요 자금 = 목표 수량 × 생산 단가(가정). 모인 금액은 투자 의향의 합계예요.</p><div id="ivE"><div class="loading">불러오는 중…</div></div></section>
-  <section><div class="sec-t">회사(플랫폼)에 투자</div><div class="card small"><b style="color:var(--ink)">돈 버는 방법 (가정)</b><br>· 에디션 판매 이익: 1개당 판매가의 약 37~43% (헤어오일 3,000~5,000개 묶음 생산 기준)<br>· 성과형 판매 수수료 5%, 공장 슬롯 수수료 3%<br>· 손익분기: 월 고정비 3,000만 원이면 헤어오일 월 약 3,200개<div style="margin-top:12px"><button class="btn o full" id="ivCo">회사 투자 의향 남기기</button></div></div></section>
+  <section><div class="sec-t">회사(플랫폼)에 투자</div><div class="card small"><b style="color:var(--ink)">돈 버는 방법 (가정)</b><br>· 에디션 판매 이익: 1개당 판매가의 약 30~35% (부가세 반영, 헤어 오일 3,000~5,000개 묶음 생산 기준)<br>· 성과형 판매 수수료 5%, 공장 슬롯 수수료 3%<br>· 손익분기: 월 고정비 3,000만 원이면 헤어 오일 월 약 4,400개<div style="margin-top:12px"><button class="btn o full" id="ivCo">회사 투자 의향 남기기</button></div></div></section>
   <section><div class="note"><b>꼭 알아 두세요</b><br>시험판은 투자 의향만 받아요. 돈을 받지 않고 수익을 약속하지 않아요. 실제 투자 모집은 법에 맞는 방식(증권형 크라우드펀딩 중개업체를 통한 모집, 소수 투자자 대상 사모 등)으로 법률 검토를 마친 뒤에만 해요.</div></section>${beta()}`;
 }
 function bindInvest(){
