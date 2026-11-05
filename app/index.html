@@ -182,7 +182,7 @@ const db = getFirestore(fb);
 const SUPPORT = JSON.parse(document.getElementById('supportData').textContent || '[]');
 const ROUTES = JSON.parse(document.getElementById('routeData').textContent || '[]');
 const CHECKED = '2026.11.5';
-const SHARE = 0.25, CROSS = 0.10, PFEE = 0.08, DEPOSIT = 0.5;
+const SHARE = 0.25, CROSS = 0.10, PFEE = 0.08, DEPOSIT = 1.0;
 const COST = {mist:5000, hair_oil:5000, hoodie:25400, sweat:21000, cap:18500};
 const SCENTS = [{k:'glow',n:'라이브 글로우',c:'#E7B46A'},{k:'soap',n:'새벽 비누',c:'#EBCB93'},{k:'fig',n:'무화과 우디',c:'#C68752'}];
 const MISTS = [{k:'glow',n:'라이브 글로우',c:'#F1DCE6'},{k:'soap',n:'새벽 비누',c:'#DCE9F1'},{k:'fig',n:'무화과 우디',c:'#E9E0CC'}];
@@ -482,7 +482,7 @@ function bindAddBtn(k){ const b=document.getElementById('addDoor'); if(b) b.oncl
 /* ---------- 투자 ---------- */
 function investBody(){
   return `<section><div class="sec-t">투자 현황판 (실시간)</div><div class="kpi" id="ivK"><div class="loading">계산 중…</div></div></section>
-  <section><div class="sec-t">생산 자금이 필요한 에디션</div><p class="tiny">필요 자금 = 목표 수량 × 생산 단가 × 착수금 50% (단가는 가정). 모인 금액은 투자 의향의 합계예요.</p><div id="ivE"><div class="loading">불러오는 중…</div></div></section>
+  <section><div class="sec-t">생산 자금이 필요한 에디션</div><p class="tiny">선주문 대금은 받는 사람이 배송을 확인한 뒤 정산돼요. 그 전에 공장에 줄 생산비(착수금·잔금)를 투자자가 채워요. 필요 자금 = 목표 수량 × 생산 단가(가정). 모인 금액은 투자 의향의 합계예요.</p><div id="ivE"><div class="loading">불러오는 중…</div></div></section>
   <section><div class="sec-t">회사(플랫폼)에 투자</div><div class="card small"><b style="color:var(--ink)">돈 버는 방법 (가정)</b><br>· 에디션 판매 이익: 1개당 판매가의 약 37~43% (헤어오일 3,000~5,000개 묶음 생산 기준)<br>· 성과형 판매 수수료 8%, 공장 슬롯 수수료 3%<br>· 손익분기: 월 고정비 3,000만 원이면 헤어오일 월 약 3,200개<div style="margin-top:12px"><button class="btn o full" id="ivCo">회사 투자 의향 남기기</button></div></div></section>
   <section><div class="note"><b>꼭 알아 두세요</b><br>시험판은 투자 의향만 받아요. 돈을 받지 않고 수익을 약속하지 않아요. 실제 투자 모집은 법에 맞는 방식(증권형 크라우드펀딩 중개업체를 통한 모집, 소수 투자자 대상 사모 등)으로 법률 검토를 마친 뒤에만 해요.</div></section>${beta()}`;
 }
@@ -495,7 +495,7 @@ function bindInvest(){
     k.innerHTML=[['누적 선주문액',man(gmv)],['목표 달성 에디션',ach+' / '+EDS.length+'개'],['생산·발송 중',mk+'개'],['성과형 판매액',man(ofs)],['공장 · 팔 곳',FAC+'곳 · '+(CH+ROUTES.length)+'곳'],['모인 생산 자금 의향',man(pledged)]].map(x=>`<div class="card"><div class="tiny">${x[0]}</div><b>${x[1]}</b></div>`).join('');
     const el=document.getElementById('ivE'); if(!el) return;
     const list=EDS.filter(e=>e.status==='pre'||e.status==='closed').sort((a,b)=>(b.sold||0)/b.goal-(a.sold||0)/a.goal);
-    el.innerHTML = list.length ? list.map(e=>{ const unit=e.slotId&&SLOTS[e.slotId]?SLOTS[e.slotId].unitCost:null; const need=needFund(e,unit), got=e.fundPledged||0, pct=need?Math.min(100,Math.round(got/need*100)):0; return `<div class="card"><a class="ed" href="#/p/${e.id}"><div class="th">${artFor(e)}</div><div class="meta">${statusPill(e)}<div class="t" style="margin-top:5px">${esc(e.title)} ${P(e.product).name}</div><div class="tiny">${esc(e.handle||'')} · 선주문 ${e.sold||0}/${e.goal}개 (${Math.round((e.sold||0)/e.goal*100)}%)</div></div></a><div class="row between small" style="margin-top:10px"><span>필요 생산 자금 <b style="color:var(--ink)">${man(need)}</b></span><span>모인 의향 <b style="color:var(--ink)">${man(got)}</b></span></div><div class="bar g"><i style="width:${pct}%"></i></div><button class="btn s full" data-inv="${e.id}" style="margin-top:8px">생산 자금 의향 넣기</button></div>`; }).join('') : '<div class="empty">지금 자금이 필요한 에디션이 없어요.</div>';
+    el.innerHTML = list.length ? list.map(e=>{ const unit=e.slotId&&SLOTS[e.slotId]?SLOTS[e.slotId].unitCost:null; const need=needFund(e,unit), got=e.fundPledged||0, pct=need?Math.min(100,Math.round(got/need*100)):0; return `<div class="card"><a class="ed" href="#/p/${e.id}"><div class="th">${artFor(e)}</div><div class="meta">${statusPill(e)}<div class="t" style="margin-top:5px">${esc(e.title)} ${P(e.product).name}</div><div class="tiny">${esc(e.handle||'')} · 선주문 ${e.sold||0}/${e.goal}개 (${Math.round((e.sold||0)/e.goal*100)}%)</div></div></a><div class="row between small" style="margin-top:10px"><span>필요 생산 자금 <b style="color:var(--ink)">${man(need)}</b></span><span>모인 의향 <b style="color:var(--ink)">${man(got)}</b>${got>=need&&need?' (다 모임)':''}</span></div><div class="bar g"><i style="width:${pct}%"></i></div><button class="btn s full" data-inv="${e.id}" style="margin-top:8px">생산 자금 의향 넣기</button></div>`; }).join('') : '<div class="empty">지금 자금이 필요한 에디션이 없어요.</div>';
     el.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>investSheet(EDS.find(x=>x.id===b.dataset.inv)));
   };
   sub(onSnapshot(query(collection(db,'editions'), orderBy('createdAt','desc'), limit(200)), s=>{ EDS=s.docs.map(d=>({id:d.id,...d.data()})); draw(); }));
@@ -549,7 +549,7 @@ function viewEdition(id, partner){
     const b=document.getElementById('buy'); if(b) b.onclick=()=>buySheet(e);
     let unit=null;
     if(e.slotId){ try{ const sd=await getDoc(doc(db,'slots',e.slotId)); const f=document.getElementById('facName'); if(sd.exists()){ unit=sd.data().unitCost; if(f) f.textContent=sd.data().factoryName+' · '+sd.data().week+' 생산'; } else if(f) f.textContent='협력 공장'; }catch(x){} }
-    if(showInv){ const need=needFund(e,unit), got=e.fundPledged||0; const t=document.getElementById('fundTxt'), br=document.getElementById('fundBar'); if(t) t.innerHTML=`필요 ${man(need)} (착수금 50%, 단가 ${unit?'공장 슬롯 기준':'가정'}) · 모인 의향 <b style="color:var(--ink)">${man(got)}</b>`; if(br) br.style.width=(need?Math.min(100,Math.round(got/need*100)):0)+'%'; }
+    if(showInv){ const need=needFund(e,unit), got=e.fundPledged||0; const t=document.getElementById('fundTxt'), br=document.getElementById('fundBar'); if(t) t.innerHTML=`정산 전까지 필요한 생산비 ${man(need)} (단가 ${unit?'공장 슬롯 기준':'가정'}) · 모인 의향 <b style="color:var(--ink)">${man(got)}</b>${got>=need&&need?' · 다 모였어요':''}`; if(br) br.style.width=(need?Math.min(100,Math.round(got/need*100)):0)+'%'; }
   }));
 }
 function buySheet(e){
