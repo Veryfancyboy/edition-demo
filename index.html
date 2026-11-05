@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#15171C">
-<title>에디션(가칭) · 인플루언서 첫 제품 시제품</title>
-<meta property="og:title" content="에디션(가칭) · 인플루언서 첫 제품 시제품">
-<meta property="og:description" content="팬이 먼저 주문하면 그때 만들어요. 재고 없이 내 이름 건 제품.">
+<title>에디션(가칭) · 인플루언서·광고주·공장 브릿지 시제품</title>
+<meta property="og:title" content="에디션(가칭) · 인플루언서·광고주·공장 브릿지">
+<meta property="og:description" content="팔릴 만큼만 만들고, 팔린 만큼만 나눠요. 선주문 하나로 인플루언서·광고주·공장을 잇는 시제품.">
 <style>
 :root{--ink:#15171C;--sub:#5B606B;--mute:#8B8F98;--line:#E7E3DA;--bg:#F7F5F0;--card:#fff;--ac:#E4572E;--acs:#FFF0EA;--ok:#2F8F5B;--oks:#EAF6EF;--warn:#B7791F;--r:16px}
 *{box-sizing:border-box}
@@ -153,6 +153,29 @@ nav.tabs a.on svg{stroke:var(--ac)}
 .wk{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 .wk b{color:var(--ac);font-size:14px}
 .wk div{font-size:14.5px}
+.sides{display:grid;gap:10px}
+.side{text-decoration:none;display:block;border-top:4px solid var(--ink)}
+.side.c{border-top-color:#E4572E}.side.b{border-top-color:#2F6FDB}.side.f{border-top-color:#2F8F5B}
+.side-t{font-size:18px;font-weight:900;letter-spacing:-.02em}
+.side ul{margin:0 0 8px;padding-left:18px;font-size:14px;color:var(--sub)}
+.side-go{font-size:13.5px;font-weight:800}
+.diff{display:grid;grid-template-columns:1fr 1.2fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:start}
+.diff:last-child{border-bottom:0}
+.diff .old{color:var(--mute);text-decoration:line-through;text-decoration-color:#cfc8bb}
+.diff .new{font-weight:800}
+.earn{display:grid;gap:10px}
+.earn>.card+.card{margin-top:0}
+.pb{border-left:4px solid var(--line)}
+.pb.sb{border-left-color:#2F6FDB}.pb.sc{border-left-color:#E4572E}.pb.sf{border-left-color:#2F8F5B}.pb.su{border-left-color:#7A5AF8}.pb.sp{border-left-color:#5B606B}
+.pb .sd{font-size:11.5px;font-weight:900;letter-spacing:.03em;color:var(--mute)}
+.pb.sb .sd{color:#2F6FDB}.pb.sc .sd{color:#E4572E}.pb.sf .sd{color:#2F8F5B}.pb.su .sd{color:#7A5AF8}
+.pb h3{margin:2px 0 4px}
+.pb .ev{font-size:13px;color:var(--sub);margin:0 0 8px;line-height:1.5}
+.pb .fx{font-size:14.5px;font-weight:700;line-height:1.5}
+.pb .fx:before{content:'해법  ';color:var(--ac);font-weight:900}
+.st{padding:10px 0;border-bottom:1px solid var(--line)}
+.st:last-child{border-bottom:0}
+.st .amp{font-size:14px;font-weight:800;color:var(--ok);margin-top:2px}
 @media (min-width:600px){h1{font-size:34px}.hero .art{height:240px}}
 </style>
 </head>
@@ -160,7 +183,7 @@ nav.tabs a.on svg{stroke:var(--ac)}
 <div class="app">
   <header class="top">
     <a class="logo" href="#home"><span>에디<i>션</i></span><span class="tag">가칭 · 시제품</span></a>
-    <a class="pl" href="#plan">기획 노트</a>
+    <a class="pl" href="#plan">사업 기획</a>
   </header>
   <main id="view"></main>
 </div>
@@ -310,13 +333,13 @@ function artFor(e){ var p=P(e.product); var o=O(p,e.opt); return art(p.type, o.c
 
 var ICON = {
   home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>',
-  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
-  make:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg>',
-  me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  creator:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  brand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg>',
+  factory:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4V10l6 4V6h6v15z"/><path d="M7 18h2M12 18h2M17 18h2"/></svg>',
   plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>'
 };
 function tabs(cur){
-  var t=[['home','홈'],['menu','메뉴판'],['make','만들기'],['me','내 현황'],['plan','기획 노트']];
+  var t=[['home','홈'],['creator','인플루언서'],['brand','광고주'],['factory','공장'],['plan','사업 기획']];
   document.getElementById('tabs').innerHTML = t.map(function(x){ return '<a href="#'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+ICON[x[0]]+x[1]+'</a>'; }).join('');
 }
 function foot(){ return '<div class="foot tiny">시제품 화면이에요. 인물, 숫자, 주문은 모두 예시이고 실제 결제나 생산은 되지 않아요. 가격과 최소 수량은 공장 견적을 받으면 바뀝니다.</div>'; }
@@ -331,34 +354,65 @@ function edCard(e){
 
 /* ---------- 홈 ---------- */
 function vHome(){
-  var hp=P('hair_oil'), hd=P('hoodie');
-  return '<section class="hero"><div class="kick">인플루언서 첫 제품 만들기</div><h1>내 이름 건 제품,<br><span class="ac">재고 없이</span> 시작해요.</h1>'+
-    '<p class="sub">팬이 먼저 주문하면 그때 만들어요. 공장 찾기, 허가, 생산, 배송, 고객 응대는 저희가 맡아요. 시작 비용은 0원이에요.</p>'+
-    '<div class="art">'+art('bottle', SCENTS[0].c, 'LIVE GLOW', '@hair_lab_min')+art('hoodie', COLORS[1].c, 'SEOA ON AIR', '@mood_by_seoa')+'</div>'+
-    '<div class="grid2"><a class="btn o" href="#make">내 제품 만들어 보기</a><a class="btn w" href="#menu">메뉴판 보기</a></div></section>'+
-    '<section><div class="sec-t">이렇게 진행돼요</div><div class="card steps">'+
-    '<div class="step"><b class="n">1</b><div><h3>고르기</h3><div class="small">메뉴판에서 헤어 오일, 미스트, 후드티 같은 기본 제품을 골라요. 가격과 최소 수량이 처음부터 보여요.</div></div></div>'+
-    '<div class="step"><b class="n">2</b><div><h3>내 것으로</h3><div class="small">향, 색, 라벨에 내 이름과 에디션 이름을 넣어요. 바로 미리보기로 확인해요.</div></div></div>'+
-    '<div class="step"><b class="n">3</b><div><h3>선주문 열기</h3><div class="small">2주 동안 팬 선주문을 받아요. 목표 수량을 넘기면 생산을 시작하고, 못 넘기면 전액 환불돼요.</div></div></div></div></section>'+
-    '<section class="trio"><div class="sec-t">혼자 만들 때 막히던 3가지</div>'+
-    '<div class="card"><div class="q">최소 수량</div><div class="ic">1</div><div><div class="x small">공장은 보통 3,000~5,000개부터</div><b>같은 기본 제품을 여러 에디션이 묶어서 발주해요. 한 사람은 200개부터.</b></div></div>'+
-    '<div class="card"><div class="q">허가</div><div class="ic">2</div><div><div class="x small">화장품은 내 상표로 팔면 책임판매업 등록 필수</div><b>저희가 책임판매업자로 품질과 안전을 맡아요. 상표는 인플루언서 것이에요.</b></div></div>'+
-    '<div class="card"><div class="q">재고 돈</div><div class="ic">3</div><div><div class="x small">미리 수천만 원을 들여 만들어 놓고 팔기</div><b>선주문으로 팔린 만큼만 만들어요. 시작 비용 0원.</b></div></div></section>'+
-    '<section class="calc"><div class="sec-t">얼마나 벌까요</div><div class="card">'+
+  function side(cls, title, sub, items, href, btn){ return '<a class="card side '+cls+'" href="'+href+'"><div class="side-t">'+title+'</div><div class="small" style="margin-bottom:6px">'+sub+'</div><ul>'+items.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul><span class="side-go">'+btn+' →</span></a>'; }
+  var diffs = [
+    ['팔로워 수 보고 고르기','실제 판매 실적과 반품률로 고르기'],
+    ['광고비 먼저 내기','팔린 만큼만 내기 (성과형이 기본)'],
+    ['DM으로 몸값·견적 묻기','가격표와 제작 메뉴판이 처음부터 공개'],
+    ['광고비 떼먹힘·감액','결제 때 돈 보관, 기준 맞으면 자동 지급'],
+    ['DM·계좌이체 공구, 환불 막막','플랫폼 결제만, 판매·책임 주체 표시, 목표 미달 자동 환불'],
+    ['공장 최소 3,000~5,000개','묶음 생산 슬롯으로 200개부터 (옷 50장)']
+  ];
+  return '<section class="hero"><div class="kick">인플루언서 · 광고주 · 공장 브릿지</div><h1>팔릴 만큼만 만들고,<br><span class="ac">팔린 만큼만</span> 나눠요.</h1>'+
+    '<p class="sub">팬 선주문 하나로 세 쪽이 같이 움직여요. 광고주는 팔린 만큼 내고, 인플루언서는 내 이름 건 제품을 내고, 공장은 확정된 주문만 받아요. 돈은 결제 때 보관했다가 약속이 지켜지면 나눠요.</p>'+
+    '<div class="art">'+art('bottle', SCENTS[0].c, 'LIVE GLOW', '@hair_lab_min')+art('hoodie', COLORS[1].c, 'SEOA ON AIR', '@mood_by_seoa')+'</div></section>'+
+    '<section class="sides">'+
+      side('c','인플루언서','광고·판매·내 제품, 세 가지 수입',['가격표 올리면 DM 없이 광고 판매','광고주 상품을 내 링크로 팔고 커미션','재고 없이 내 이름 건 제품'],'#creator','인플루언서 화면')+
+      side('b','광고주','팔로워 말고 판매 실적으로',['판매가 생길 때만 비용','실제 판매·반품 데이터로 인플루언서 선택','인플루언서 이름 한정판으로 신제품 시험'],'#brand','광고주 화면')+
+      side('f','공장','견적 문의 말고 확정 주문',['선주문으로 확정된 수량만','착수금 선지급, 나머지는 보관금에서','작은 주문을 묶어 큰 주문으로'],'#factory','공장 화면')+
+    '</section>'+
+    '<section><div class="sec-t">선주문 하나로 세 쪽이 움직여요</div><div class="card"><div class="tl">'+
+      '<div class="s done"><b>1. 상품 올리기</b><span>인플루언서 에디션, 광고주 상품, 콜라보 한정판</span></div>'+
+      '<div class="s done"><b>2. 팬 선주문</b><span>돈은 플랫폼이 보관. 목표 못 채우면 전액 자동 환불</span></div>'+
+      '<div class="s now"><b>3. 생산 슬롯 확정</b><span>목표를 넘기면 공장 슬롯이 확정되고 착수금이 나가요</span></div>'+
+      '<div class="s"><b>4. 생산·검수·발송</b><span>공장 납품 → 검수 → 한 번에 발송</span></div>'+
+      '<div class="s"><b>5. 정산</b><span>판매 확정 뒤 인플루언서·광고주·공장에 자동 정산</span></div>'+
+    '</div></div></section>'+
+    '<section><div class="sec-t">지금 플랫폼들과 다른 점</div><div class="card" style="padding:6px 14px">'+
+      diffs.map(function(d){ return '<div class="diff"><div class="old">'+d[0]+'</div><div class="new">'+d[1]+'</div></div>'; }).join('')+
+    '</div><a class="btn w full" href="#plan" style="margin-top:10px">문제와 해법 자세히 (사업 기획)</a></section>'+
+    '<section><div class="sec-t">에디션 둘러보기 (예시)</div>'+ SAMPLES.map(edCard).join('') +'</section>'+ foot();
+}
+function bindHome(){}
+
+/* ---------- 인플루언서 ---------- */
+function vCreator(){
+  var hp=P('hair_oil');
+  return '<section><div class="kick" style="margin-top:20px">인플루언서</div><h2>광고, 판매, 내 제품.<br>세 가지 수입을 한 곳에서.</h2></section>'+
+    '<div class="earn">'+
+      '<div class="card"><span class="pill">1</span><h3 style="margin-top:6px">정찰 광고</h3><div class="small">가격표를 올려 두면 광고주가 보고 바로 결제해요. 돈은 결제 때 보관되고, 게시 기준이 맞으면 자동으로 들어와요.</div></div>'+
+      '<div class="card"><span class="pill">2</span><h3 style="margin-top:6px">성과형 판매</h3><div class="small">광고주 상품을 내 링크로 팔고 판매액의 10~30%를 받아요. 재고·배송·환불은 내가 안 해요.</div></div>'+
+      '<div class="card"><span class="pill o">3</span><h3 style="margin-top:6px">내 에디션</h3><div class="small">재고 없이 내 이름 건 제품. 팬 선주문이 목표를 넘으면 만들고, 판매액의 25%를 받아요.</div></div>'+
+    '</div>'+
+    '<div class="grid3" style="margin-top:12px"><a class="btn o" href="#make" style="padding:12px 8px;font-size:14px">내 제품 만들기</a><a class="btn w" href="#menu" style="padding:12px 8px;font-size:14px">제작 메뉴판</a><a class="btn w" href="#me" style="padding:12px 8px;font-size:14px">내 현황</a></div>'+
+    '<section class="calc"><div class="sec-t">내 에디션으로 얼마나 벌까요</div><div class="card">'+
     '<label class="lbl"><span>선주문 수량</span><span id="cq">300개</span></label><input type="range" id="calcQ" min="50" max="2000" step="10" value="300">'+
     '<label class="lbl"><span>판매가 (헤어 오일 기준)</span><span id="cp">22,900원</span></label><input type="range" id="calcP" min="'+hp.lo+'" max="'+hp.hi+'" step="500" value="'+hp.price+'">'+
-    '<div style="margin-top:12px" class="small">내 몫 (판매액의 25%)</div><div class="big" id="cr">0원</div>'+
-    '<div class="tiny" id="cr2"></div></div></section>'+
-    '<section><div class="sec-t">에디션 둘러보기 (예시)</div>'+ SAMPLES.map(edCard).join('') +'</section>'+
+    '<div style="margin-top:12px" class="small">내 몫 (판매액의 25%)</div><div class="big" id="cr">0원</div><div class="tiny" id="cr2"></div></div></section>'+
+    '<section><div class="sec-t">인플루언서를 지키는 장치</div><div class="card small">'+
+    '· <b>대금 보관:</b> 광고주가 결제할 때 돈을 먼저 받아 둬요. 게시 기준을 맞추면 자동 지급이라 감액·미지급이 생기지 않아요.<br>'+
+    '· <b>표준 계약:</b> 2차 활용은 범위·기간·금액을 따로 정해야만 쓸 수 있어요.<br>'+
+    '· <b>책임은 판매자가:</b> 배송·환불·제품 사고는 플랫폼과 브랜드 책임이에요. 인플루언서가 떠안지 않아요.<br>'+
+    '· <b>세금 자동:</b> 원천징수와 세금 서류를 대신 처리해요.<br>'+
+    '· <b>광고 표기 점검:</b> 올리기 전에 표기와 금지 표현을 확인해 줘요.</div></section>'+
     '<section><div class="sec-t">자주 묻는 질문</div>'+
-    '<details><summary>정말 돈이 하나도 안 드나요?</summary><p>네. 샘플, 생산, 배송, 고객 응대 비용은 저희가 먼저 내고, 판매액에서 회수해요. 인플루언서는 판매액의 25%를 받아요.</p></details>'+
+    '<details><summary>정말 돈이 하나도 안 드나요?</summary><p>네. 샘플, 생산, 배송, 고객 응대 비용은 저희가 먼저 내고 판매액에서 회수해요.</p></details>'+
     '<details><summary>목표 수량을 못 채우면요?</summary><p>생산하지 않고 팬에게 전액 환불해요. 인플루언서에게 위약금은 없어요.</p></details>'+
     '<details><summary>상표는 누구 것인가요?</summary><p>에디션 이름과 로고는 인플루언서 것이에요. 저희는 계약 기간 동안 만들고 팔 권리를 받아요.</p></details>'+
     '<details><summary>사고가 나면 누가 책임지나요?</summary><p>화장품은 저희가 책임판매업자로 품질과 안전을 책임져요. 그래서 검증된 기본 처방만 메뉴판에 올려요.</p></details>'+
-    '<details><summary>다른 사람 제품도 팔 수 있나요?</summary><p>네. 다른 인플루언서의 에디션을 내 링크로 팔면 판매액의 10%를 받아요. 서로 팔아 주는 구조예요.</p></details>'+
-    '</section><a class="btn o full" href="#make">내 제품 만들어 보기</a>'+ foot();
+    '</section>'+ foot();
 }
-function bindHome(){
+function bindCreator(){
   var q=document.getElementById('calcQ'), p=document.getElementById('calcP');
   function up(){ var qq=+q.value, pp=+p.value, mine=qq*pp*SHARE; document.getElementById('cq').textContent=qq.toLocaleString('ko-KR')+'개'; document.getElementById('cp').textContent=won(pp);
     document.getElementById('cr').textContent=won(mine); document.getElementById('cr2').textContent='사업자가 아니면 원천징수 3.3%를 떼고 '+won(mine*0.967)+' 입금 · 판매액 '+man(qq*pp); }
@@ -479,66 +533,194 @@ function vMe(){
 }
 function bindMe(){ [].forEach.call(document.querySelectorAll('[data-link]'), function(b){ b.onclick=function(){ toast('판매 링크를 만들었어요 (시험)'); }; }); }
 
-/* ---------- 기획 노트 ---------- */
+/* ---------- 광고주 ---------- */
+var CREATORS = [
+  {h:'@hair_lab_min', f:'헤어·두피', fol:'3.2만', sold:741, ret:'1.2%', hit:'3번 중 3번', price:'릴스 35만 원'},
+  {h:'@cafe_hopper_yuna', f:'카페', fol:'2.4만', sold:265, ret:'1.5%', hit:'1번 중 1번', price:'릴스 25만 원'},
+  {h:'@gym_jiho', f:'운동', fol:'8.4만', sold:212, ret:'0.8%', hit:'1번 중 1번', price:'릴스 55만 원'},
+  {h:'@mood_by_seoa', f:'라이브 방송', fol:'5.1만', sold:41, ret:'-', hit:'진행 중', price:'라이브 소개 20만 원'}
+];
+var PFEE = 0.08;
+function vBrand(){
+  return '<section><div class="kick" style="margin-top:20px">광고주</div><h2>팔로워 말고 판매 실적으로 고르고,<br>팔린 만큼만 내요.</h2></section>'+
+   '<div class="earn">'+
+    '<div class="card"><span class="pill o">기본</span><h3 style="margin-top:6px">성과형 판매</h3><div class="small">상품과 커미션만 올리면 인플루언서들이 자기 링크로 팔아요. 비용은 판매가 생길 때만 나가고, 결제·환불 창구는 플랫폼이 맡아요.</div></div>'+
+    '<div class="card"><span class="pill">광고</span><h3 style="margin-top:6px">정찰 섭외</h3><div class="small">가격표를 보고 바로 결제해요. 콘텐츠를 확인하고 승인하면 그때 인플루언서에게 지급돼요.</div></div>'+
+    '<div class="card"><span class="pill k">신제품</span><h3 style="margin-top:6px">콜라보 에디션</h3><div class="small">우리 제품을 인플루언서 이름 한정판으로 내요. 선주문으로 수요를 먼저 확인하고 그만큼만 만들어요.</div></div>'+
+   '</div>'+
+   '<section class="calc"><div class="sec-t">성과형 판매 계산</div><div class="card">'+
+    '<label class="lbl"><span>판매가</span><span id="bp">30,000원</span></label><input type="range" id="bP" min="10000" max="100000" step="1000" value="30000">'+
+    '<label class="lbl"><span>인플루언서 커미션</span><span id="bc">20%</span></label><input type="range" id="bC" min="10" max="30" step="1" value="20">'+
+    '<div class="legend" style="margin-top:12px" id="bres"></div>'+
+    '<p class="tiny" style="margin:10px 0 0">판매가 0개면 비용도 0원이에요. 플랫폼 수수료 8%(결제 수수료 포함)는 가정값이에요.</p></div></section>'+
+   '<section><div class="sec-t">판매 실적으로 고르기 (예시)</div><div class="card" style="padding:4px 12px"><table>'+
+    '<tr><th>인플루언서</th><th class="r">누적 판매</th><th class="r">반품률</th><th class="r">목표 달성</th></tr>'+
+    CREATORS.map(function(c){ return '<tr><td><b>'+c.h+'</b><div class="tiny">'+c.f+' · 팔로워 '+c.fol+' · '+c.price+'</div></td><td class="r">'+c.sold.toLocaleString('ko-KR')+'개</td><td class="r">'+c.ret+'</td><td class="r">'+c.hit+'</td></tr>'; }).join('')+
+   '</table></div><p class="tiny" style="margin-top:6px">팔로워·조회수는 공식 연동 숫자, 판매·반품은 이 플랫폼 결제 기록이라 부풀릴 수 없어요.</p></section>'+
+   '<section><div class="sec-t">광고주를 지키는 장치</div><div class="card small">'+
+    '· <b>부풀린 숫자 차단:</b> 공식 연동 지표와 실제 판매 기록만 보여 줘요.<br>'+
+    '· <b>법 위반 예방:</b> 광고 표기와 업종별 금지 표현을 올리기 전에 점검해요.<br>'+
+    '· <b>서류 한 번:</b> 여러 명과 일해도 세금계산서는 한 장, 계약서는 자동이에요.<br>'+
+    '· <b>콘텐츠 권리 명확:</b> 2차 활용 범위·기간·금액을 계약에 숫자로 적어요.<br>'+
+    '· <b>소비자 응대 대행:</b> 결제·환불 창구를 플랫폼이 맡아 브랜드 평판을 지켜요.</div></section>'+ foot();
+}
+function bindBrand(){
+  var p=document.getElementById('bP'), c=document.getElementById('bC');
+  function up(){ var pp=+p.value, cc=+c.value/100, inf=pp*cc, fee=pp*PFEE, net=pp-inf-fee;
+    document.getElementById('bp').textContent=won(pp); document.getElementById('bc').textContent=Math.round(cc*100)+'%';
+    document.getElementById('bres').innerHTML='<div><span><i style="background:#E4572E"></i>인플루언서 커미션</span><b>'+won(inf)+'</b></div><div><span><i style="background:#8B8F98"></i>플랫폼 수수료 8%</span><b>'+won(fee)+'</b></div><div><span><i style="background:#15171C"></i>광고주에게 남는 돈 (1개당)</span><b>'+won(net)+' ('+Math.round(net/pp*100)+'%)</b></div>'; }
+  p.oninput=up; c.oninput=up; up();
+}
+
+/* ---------- 공장 ---------- */
+var SLOTS = [
+  {fac:'화장품 위탁생산 A사 · 경기', line:'헤어·바디 오일 라인', week:'12월 2주 생산', cap:2000, filled:1340, eds:7, close:'11월 24일 마감', unit:'개', cat:'beauty'},
+  {fac:'동대문 B봉제 · 서울', line:'후드·맨투맨 봉제', week:'11월 4주 생산', cap:300, filled:180, eds:3, close:'11월 18일 마감', unit:'장', cat:'fashion'},
+  {fac:'C자수 · 서울', line:'볼캡 자수', week:'12월 1주 생산', cap:400, filled:262, eds:2, close:'11월 21일 마감', unit:'개', cat:'fashion'}
+];
+function vFactory(){
+  return '<section><div class="kick" style="margin-top:20px">공장</div><h2>견적 문의 말고,<br>확정 주문만 받아요.</h2><p class="sub">빈 생산 일정을 “슬롯”으로 열어 두면, 선주문이 목표를 넘긴 에디션들이 그 슬롯을 채워요.</p></section>'+
+   '<section><div class="sec-t">지금 열린 생산 슬롯 (예시)</div>'+ SLOTS.map(function(s){ var pct=Math.round(s.filled/s.cap*100); return '<div class="card"><div class="row" style="justify-content:space-between"><span class="pill '+(s.cat==='beauty'?'o':'')+'">'+(s.cat==='beauty'?'화장품':'옷·굿즈')+'</span><span class="tiny">'+s.close+'</span></div><h3 style="margin-top:6px">'+s.line+'</h3><div class="small">'+s.fac+' · '+s.week+'</div><div class="bar" style="height:10px"><i style="width:'+pct+'%"></i></div><div class="small">'+s.filled.toLocaleString('ko-KR')+s.unit+' / '+s.cap.toLocaleString('ko-KR')+s.unit+' 채움 ('+pct+'%) · 에디션 '+s.eds+'개 참여</div></div>'; }).join('') +'</section>'+
+   '<section><div class="sec-t">공장이 얻는 것</div><div class="card small">'+
+    '· <b>확정 주문만:</b> 선주문 마감으로 수량이 확정된 뒤에만 들어와요. 견적만 묻고 사라지는 문의가 없어요.<br>'+
+    '· <b>대금 걱정 없음:</b> 생산 착수 때 50%, 납품·검수 뒤 50%. 돈은 이미 플랫폼에 보관돼 있어요.<br>'+
+    '· <b>가격표 한 번:</b> 수량별 가격을 한 번 등록하면 매번 견적을 낼 필요가 없어요.<br>'+
+    '· <b>작은 주문을 큰 주문으로:</b> 여러 에디션을 묶어 한 번에 생산해요.<br>'+
+    '· <b>다시 오는 주문:</b> 잘 팔린 에디션은 재생산 슬롯으로 이어져요.</div></section>'+
+   '<section><div class="sec-t">슬롯 열어 보기</div><div class="card">'+
+    '<label class="field"><span>품목</span><input type="text" id="sName" value="후드·맨투맨 봉제"></label>'+
+    '<label class="lbl"><span>수량</span><span id="sq">300개</span></label><input type="range" id="sQ" min="50" max="3000" step="50" value="300">'+
+    '<label class="lbl"><span>1개당 생산 단가</span><span id="sp">18,000원</span></label><input type="range" id="sP" min="1000" max="40000" step="500" value="18000">'+
+    '<div class="res" style="margin-top:12px"><div class="tiny">슬롯이 다 차면 생산 대금</div><div class="big" id="sres">0원</div><div class="tiny" id="sres2"></div></div>'+
+    '<p class="tiny" style="margin:10px 0 0">단가와 지급 방식은 예시예요. 실제 조건은 공장과 계약으로 정해요.</p></div></section>'+
+   '<section><div class="sec-t">공장 쪽 사정 (근거)</div><div class="card small">'+
+    '· 의류 제조업체의 62.9%가 2024년 매출이 줄었고, 82.1%는 연 매출 3억 원 미만이에요 (한국패션협회 실태조사, 2026.2).<br>'+
+    '· 동대문 상가가 절반 가까이 비고 봉제 공장 폐업이 이어진다는 현장 목소리가 나와요 (패션비즈, 2026.4).<br>'+
+    '· 화장품은 반대로 큰 위탁생산 업체가 바쁘고 용기도 모자라서, 작은 브랜드일수록 조달이 밀려요 (파이낸셜뉴스, 2026.10).<br>'+
+    '→ 옷은 <b>일감을 채워 주는 쪽</b>으로, 화장품은 <b>작은 주문을 묶어 큰 고객처럼</b> 들어가요.</div></section>'+ foot();
+}
+function bindFactory(){
+  var q=document.getElementById('sQ'), p=document.getElementById('sP');
+  function up(){ var qq=+q.value, pp=+p.value, tot=qq*pp; document.getElementById('sq').textContent=qq.toLocaleString('ko-KR')+'개'; document.getElementById('sp').textContent=won(pp);
+    document.getElementById('sres').textContent=won(tot); document.getElementById('sres2').innerHTML='착수 때 '+won(tot*0.5)+' 먼저 지급 · 납품·검수 뒤 '+won(tot*0.5)+'<br>공장 수수료 3% (영업·견적 비용 대신, 가정) '+won(tot*0.03); }
+  q.oninput=up; p.oninput=up; up();
+}
+
+/* ---------- 사업 기획 ---------- */
+var PROBLEMS = [
+  ['b','광고주','부풀린 숫자','마케터들이 꼽은 사기·품질 문제의 56.5%가 가짜·봇 팔로워 (Influencer Marketing Hub, 2026)','팔로워 대신 이 플랫폼 결제로 쌓인 판매·반품 기록과 공식 연동 지표만 보여 준다'],
+  ['b','광고주','매출로 이어졌는지 모름','인플루언서 캠페인을 매출과 자신 있게 연결하는 곳은 25%뿐, 63%가 성과 증명을 가장 큰 장벽으로 꼽음 (WFA, 2025)','모든 판매가 플랫폼 결제를 거쳐 매출이 자동으로 잡힌다. 기본 결제는 성과형'],
+  ['b','광고주','광고비 먼저, 위험도 광고주가','기존 방식은 협찬비 선지급, 성과 미달 위험은 광고주 부담 (인플리 비교표)','성과형 판매가 기본. 신제품은 선주문으로 수요를 확인한 뒤 생산'],
+  ['c','인플루언서','광고비 미지급·감액','인플루언서 6명에게 20여억 원을 주지 않은 업체 대표 송치, 효과 없다며 50%만 주려는 사례 (이데일리, 2025.7)','결제 때 플랫폼이 돈을 먼저 보관. 계약에 숫자로 정한 기준을 맞추면 자동 지급'],
+  ['c','인플루언서','판매자 잘못을 대신 떠안음','판매업체 문제로 소비자 불만이 인플루언서에게 향하고, 인플루언서도 업체 검증에 한계 (데일리안, 2026.8)','판매·환불 책임은 플랫폼과 브랜드. 검증한 브랜드와 공장만 입점'],
+  ['c','인플루언서','자기 제품을 못 만듦','공장 최소 수량 보통 3,000~5,000개, 화장품은 내 상표로 팔면 책임판매업 등록 필수','선주문 + 묶음 생산 슬롯으로 200개부터. 책임판매는 우리가'],
+  ['f','공장','일감 감소 (옷)','의류 제조업체 62.9%가 2024년 매출 감소, 82.1%가 연 매출 3억 원 미만, 주거래처 의존 71.1% (한국패션협회, 2026.2)','선주문으로 확정된 주문을 슬롯으로 연결. 착수금 선지급'],
+  ['f','공장','작은 브랜드는 뒤로 밀림 (화장품)','위탁생산 가동률이 81%로 오르고 용기가 모자라 작은 브랜드일수록 조달 차질 (파이낸셜뉴스, 2026.10)','작은 에디션을 묶어 큰 주문으로. 표준 용기 묶음 선구매'],
+  ['u','소비자','공구 피해 급증','SNS·인플루언서 광고·공구 상담이 1년 새 124.7% 늘어 3,642건, 올해 8월까지 2,874건. 60.3%가 계약불이행·해지·청약철회 (헤럴드경제, 2026.10)','플랫폼 결제만 허용 (DM·계좌이체 금지), 목표 미달 자동 환불, 청약철회 표준 처리'],
+  ['u','소비자','누가 판매자인지 모호','판매자인지 소개자인지 모호한 구조가 책임 회피 가능성을 높임 (쿠키뉴스, 2025.11)','상품마다 판매자·책임판매자·제조사·기획자를 표시'],
+  ['p','플랫폼','직거래로 빠져나감','잘 맞는 크리에이터를 찾으면 광고주가 플랫폼 밖으로 나가 재구매가 끊김 (해외 분석, 2026.2)','돈 보관·책임판매·환불 창구·판매 기록이 플랫폼 안에서만 작동. 에디션 처방 전속'],
+  ['p','플랫폼','사람 손이 많이 들어 비쌈','매칭을 매니저가 하면 고객 확보 비용이 오름 (같은 분석)','가격표·제작 메뉴판·자동 정산으로 셀프서비스. 사람은 공장 관리에 집중']
+];
+var STRENGTHS = [
+  ['성과형 공구','판매가 생겼을 때만 비용 (한국경제, 2026.8)','광고주 기본 결제 방식으로'],
+  ['팬덤 구매 전환','화해 공구 구매 전환율 21.09% (일간스포츠, 2026.1)','선주문·에디션으로 팬덤을 생산 결정에 쓴다'],
+  ['공식 연동 지표','인플리·애드핏은 공식 연동 숫자를 씀','그대로 쓰고 판매·반품 기록을 더한다'],
+  ['대금 보관 (에스크로)','인플리·Collabstr는 승인 뒤 지급','광고비뿐 아니라 공장 대금·선주문까지 전부'],
+  ['정찰 가격·바로 구매','Collabstr는 크리에이터가 가격을 먼저 공개','광고 가격표에 제작 메뉴판까지'],
+  ['소량 생산·묶음 발주','브래닛 500개 초소량, 뉴트리케어 공동발주','상시 열리는 “생산 슬롯”으로'],
+  ['인큐베이팅·판로','CJ온큐베이팅 브랜드당 최대 10억 원 지원','큰돈 대신 선주문 검증으로 작은 크리에이터까지']
+];
 function vPlan(){
   var price=22900, inf=price*0.25, cost=4000, pay=Math.round(price*0.03), ship=3000, us=price-inf-cost-pay-ship;
   function w(v){ return (v/price*100).toFixed(1)+'%'; }
-  return '<section><div class="kick" style="margin-top:20px">기획 노트 v0.2</div><h2>작은 인플루언서의 첫 제품을,<br>선주문으로 만들고 같이 판다.</h2>'+
-    '<p class="sub">팔로워 1만~10만 인플루언서와 라이브 호스트가 재고 없이 자기 이름 건 제품을 내는 곳. 팬 선주문으로 최소 수량을 채우고, 생산·허가·배송·고객 응대는 우리가 맡는다.</p></section>'+
-    '<section><div class="sec-t">왜 지금</div><div class="card small">'+
-    '· 인플루언서 공구는 보통 매출의 <b>10~30%</b>를 수수료로 받는다 (한국경제, 2026.8)<br>'+
-    '· CJ온스타일의 크리에이터 협업 주문은 <b>1년 새 4.3배</b>가 됐다 (CJ온스타일, 2026.9)<br>'+
-    '· 인플루언서 브랜드 사례: 유아른 <b>4년 만에 연 매출 30억 원</b>, 모렛 <b>9개월 매출 5억 원</b></div></section>'+
-    '<section><div class="sec-t">이미 있는 것과 우리 자리</div><div class="card"><table>'+
-    '<tr><th>곳</th><th>하는 일</th></tr>'+
-    '<tr><td><b>셀프코스</b></td><td>화장품 제조사 무료 매칭, 중개수수료 없이 직접 계약</td></tr>'+
-    '<tr><td><b>브래닛</b></td><td>제조사 실적·최소 수량 데이터 검색, 500개 초소량 생산 안</td></tr>'+
-    '<tr><td><b>동고리</b></td><td>동대문 봉제공장을 품목·원단·최소 수량으로 추천</td></tr>'+
-    '<tr><td><b>CJ온큐베이팅</b></td><td>110억 원 펀드, 브랜드당 최대 10억 원. 큰 크리에이터·브랜드 위주</td></tr>'+
-    '</table><p class="small" style="margin:10px 0 0">→ 공장 <b>연결만</b>은 이미 공짜다. 비어 있는 곳은 <b>작은 인플루언서의 첫 제품</b>을 <b>돈·허가·판매까지</b> 대신 해 주는 일.</p></div></section>'+
-    '<section><div class="sec-t">1개 팔면 돈은 이렇게 나뉜다 (헤어 오일 22,900원, 가정)</div><div class="card">'+
+  function a(u,t){ return '<a href="'+u+'" target="_blank" rel="noopener">'+t+'</a>'; }
+  return '<section><div class="kick" style="margin-top:20px">사업 기획 v1.0</div><h2>인플루언서 · 광고주 · 공장을<br>선주문 하나로 잇는다.</h2>'+
+    '<p class="sub">광고주는 팔린 만큼 내고, 인플루언서는 내 이름 건 제품을 내고, 공장은 확정된 주문만 받는다. 돈은 결제 때 보관했다가 약속이 지켜지면 나눈다.</p></section>'+
+    '<section><div class="sec-t">세 가지 원칙</div><div class="earn">'+
+      '<div class="card"><h3>① 수요 먼저, 생산은 나중</h3><div class="small">팬 선주문이 목표를 넘어야 공장이 돈다. 재고 위험이 세 쪽 모두에서 사라진다.</div></div>'+
+      '<div class="card"><h3>② 돈은 보관했다가 나눈다</h3><div class="small">소비자·광고주가 낸 돈은 플랫폼이 보관하고, 게시·납품·배송 기준이 맞으면 자동으로 나간다.</div></div>'+
+      '<div class="card"><h3>③ 판매 기록이 신용이다</h3><div class="small">팔로워 수가 아니라 실제 판매·반품·납기 기록으로 인플루언서와 공장을 평가한다.</div></div>'+
+    '</div></section>'+
+    '<section><div class="sec-t">지금 플랫폼들의 문제 → 우리 해법</div>'+
+      PROBLEMS.map(function(x){ return '<div class="card pb s'+x[0]+'"><div class="sd">'+x[1]+'</div><h3>'+x[2]+'</h3><div class="ev">'+x[3]+'</div><div class="fx">'+x[4]+'</div></div>'; }).join('')+
+    '</section>'+
+    '<section><div class="sec-t">잘하는 점은 그대로 가져와 키운다</div><div class="card" style="padding:4px 14px">'+
+      STRENGTHS.map(function(x){ return '<div class="st"><b>'+x[0]+'</b><div class="tiny">'+x[1]+'</div><div class="amp">→ '+x[2]+'</div></div>'; }).join('')+
+    '</div></section>'+
+    '<section><div class="sec-t">팔 것과 돈 버는 법 (수수료는 가정)</div><div class="card" style="padding:4px 12px"><table>'+
+      '<tr><th>상품</th><th>누가 내나</th><th class="r">우리 몫</th></tr>'+
+      '<tr><td><b>에디션</b><div class="tiny">인플루언서 자체 제품, 선주문 생산</div></td><td>소비자</td><td class="r">헤어 오일 기준 약 41%</td></tr>'+
+      '<tr><td><b>성과형 판매</b><div class="tiny">광고주 상품을 인플루언서들이 판매</div></td><td>광고주 (팔릴 때)</td><td class="r">판매액 8%</td></tr>'+
+      '<tr><td><b>정찰 섭외</b><div class="tiny">가격표 보고 바로 결제하는 광고</div></td><td>광고주</td><td class="r">결제액 10%</td></tr>'+
+      '<tr><td><b>콜라보 에디션</b><div class="tiny">광고주 제품 × 인플루언서 이름 한정판</div></td><td>광고주 + 소비자</td><td class="r">기획·생산 관리비 + 판매액 8%</td></tr>'+
+      '<tr><td><b>생산 슬롯</b><div class="tiny">공장 빈 일정을 확정 주문으로</div></td><td>공장</td><td class="r">생산 대금 3%</td></tr>'+
+    '</table></div><p class="tiny" style="margin-top:6px">돈이 가장 많이 남는 건 에디션이고, 성과형 판매와 섭외는 판매망과 데이터를 키우는 역할이다.</p></section>'+
+    '<section><div class="sec-t">에디션 1개 팔면 (헤어 오일 22,900원, 가정)</div><div class="card">'+
     '<div class="stack"><div style="width:'+w(inf)+';background:#E4572E">인플루언서</div><div style="width:'+w(cost)+';background:#8B8F98">원가</div><div style="width:'+w(pay+ship)+';background:#C9C3B6">결제·배송</div><div style="width:'+w(us)+';background:#15171C">우리</div></div>'+
     '<div class="legend"><div><span><i style="background:#E4572E"></i>인플루언서 25%</span><b>'+won(inf)+'</b></div><div><span><i style="background:#8B8F98"></i>원가 (내용물·용기, 가정)</span><b>'+won(cost)+'</b></div><div><span><i style="background:#C9C3B6"></i>결제 3% + 배송·포장 (가정)</span><b>'+won(pay+ship)+'</b></div><div><span><i style="background:#15171C"></i>우리 (운영비·광고 전)</span><b>'+won(us)+' ('+w(us)+')</b></div></div>'+
-    '<p class="tiny" style="margin:10px 0 0">친구가 대신 팔면 판매자 몫 10%가 추가로 나가 우리 몫은 약 31%. 원가는 공장 견적 전 가정값.</p></div></section>'+
-    '<section class="who3"><div class="sec-t">누가 무엇을</div><div class="grid3" style="grid-template-columns:1fr">'+
-    '<div class="card"><h3>인플루언서</h3><ul><li>에디션 이름·상표 소유</li><li>콘텐츠와 홍보, 팬 소통</li><li>판매액 25%, 친구 에디션 팔면 10%</li></ul></div>'+
-    '<div class="card"><h3>우리 (에디션)</h3><ul><li>화장품책임판매업 등록, 품질·안전 책임</li><li>공장 선정·샘플·생산 관리, 묶음 발주</li><li>결제·배송·고객 응대, 정산·원천징수</li></ul></div>'+
-    '<div class="card"><h3>공장</h3><ul><li>검증된 기본 처방·제품 생산</li><li>품질 검사, 불량 재생산</li></ul></div></div></section>'+
+    '<p class="small" style="margin:10px 0 0"><b>손익분기 예시:</b> 월 고정비를 3,000만 원으로 잡으면 헤어 오일로 월 약 3,200개, 250개짜리 에디션 13개 정도가 필요하다.</p></div></section>'+
+    '<section><div class="sec-t">이미 있는 곳과 우리가 더하는 것</div><div class="card" style="padding:4px 12px"><table>'+
+      '<tr><th>곳</th><th>잘하는 것</th><th>우리가 더하는 것</th></tr>'+
+      '<tr><td><b>레뷰</b></td><td>국내 최대 인플루언서 풀, 체험단·캠페인</td><td>판매 실적 기반 선택, 자체 제품</td></tr>'+
+      '<tr><td><b>인플리</b></td><td>공식 연동 지표, 에스크로, 어필리에이트</td><td>공장 슬롯, 소비자 환불 창구</td></tr>'+
+      '<tr><td><b>애드핏</b></td><td>단가 공개, 수수료 0원 직거래</td><td>돈 보관, 책임 주체</td></tr>'+
+      '<tr><td><b>셀프코스·브래닛·동고리</b></td><td>공장 매칭, 소량 생산</td><td>선주문 수요, 판매망</td></tr>'+
+      '<tr><td><b>CJ온큐베이팅·온트너</b></td><td>펀드, 큰 판로</td><td>작은 크리에이터, 선주문 검증</td></tr>'+
+      '<tr><td><b>Collabstr (미국)</b></td><td>정찰 가격, 에스크로</td><td>제작과 공구까지</td></tr>'+
+    '</table></div></section>'+
+    '<section><div class="sec-t">따라오기 어려운 이유</div><div class="card small">'+
+      '· <b>판매 기록:</b> 누가 실제로 파는지에 대한 기록은 쌓일수록 매칭이 정확해지고, 다른 곳으로 옮겨 가지 않는다.<br>'+
+      '· <b>생산 슬롯 네트워크:</b> 공장 일정과 표준 용기 묶음 구매는 하루아침에 만들 수 없다.<br>'+
+      '· <b>책임판매·처방 전속:</b> 에디션은 우리 없이 다시 만들 수 없다.<br>'+
+      '· <b>서로 팔기:</b> 인플루언서가 늘수록 모든 상품의 판매망이 같이 커진다.</div></section>'+
+    '<section><div class="sec-t">시작 순서 (6개월)</div><div class="card" style="padding-top:4px;padding-bottom:4px">'+
+      '<div class="wk"><b>1~2개월</b><div><b>에디션으로 판매 기록 만들기.</b> 자체 헤어 오일 1호, 라이브 크리에이터 후드 선주문. 공장 3곳(화장품 1, 봉제 1, 자수 1)과 슬롯 계약. 책임판매업 등록</div></div>'+
+      '<div class="wk"><b>3~4개월</b><div><b>그 기록으로 광고주 모으기.</b> 성과형 판매와 정찰 섭외 열기. 기존 고객사 2곳에서 시범</div></div>'+
+      '<div class="wk" style="border:0"><b>5~6개월</b><div><b>콜라보 에디션과 공장 셀프 등록 열기.</b> 광고주 × 인플루언서 한정판, 공장이 직접 슬롯 등록</div></div>'+
+    '</div></section>'+
+    '<section><div class="sec-t">판단 기준</div><div class="card small">'+
+      '· 연 에디션의 60% 이상이 선주문 목표 달성<br>· 반품·분쟁 2% 이하<br>· 공장 정시 납품 95% 이상<br>· 두 번째 에디션을 원하는 인플루언서 50% 이상<br>· 성과형 판매를 다시 쓰는 광고주 30% 이상</div></section>'+
     '<section><div class="sec-t">위험과 대응</div><div class="card small">'+
-    '<b style="color:var(--ink)">제품 사고 책임</b> · 책임판매업자인 우리가 진다. 새 안전성 평가 의무까지 → 검증된 기본 처방만 메뉴판에 올린다.<br><br>'+
-    '<b style="color:var(--ink)">공장 직거래</b> · 첫 생산 뒤 인플루언서가 공장과 바로 거래할 수 있다 → 처방 전속, 판매권, 재생산 관리를 계약으로 묶는다.<br><br>'+
-    '<b style="color:var(--ink)">안 팔림</b> · 작은 인플루언서는 생각보다 덜 팔 수 있다 → 생산 전에 선주문으로 먼저 확인한다.<br><br>'+
-    '<b style="color:var(--ink)">대기업 경쟁</b> · 큰 크리에이터는 대기업이 데려간다 → 작고 빠른 소량 생산에 집중한다.</div></section>'+
-    '<section><div class="sec-t">8주 계획</div><div class="card" style="padding-top:4px;padding-bottom:4px">'+
-    '<div class="wk"><b>1~2주</b><div>공장 3곳 견적·샘플 요청, 책임판매업 등록 준비, 메뉴판 숫자 확정</div></div>'+
-    '<div class="wk"><b>3~4주</b><div>1호 상품(자체 헤어 오일) 샘플 확정. 라이브 호스트 1~2명 팬 굿즈 후드 선주문 시험</div></div>'+
-    '<div class="wk"><b>5~6주</b><div>선주문 페이지 공개, 인플루언서 10명 사전 모집</div></div>'+
-    '<div class="wk" style="border:0"><b>7~8주</b><div>첫 생산 착수. 계속할지 판단</div></div></div></section>'+
-    '<section><div class="sec-t">8주 끝 판단 기준</div><div class="card small">· 연 에디션의 60% 이상이 목표 수량 달성<br>· 인플루언서 1명당 평균 선주문 150개 이상<br>· 첫 판매 뒤 두 번째 에디션을 원하는 인플루언서 50% 이상</div></section>'+
-    '<section><div class="sec-t">정할 것</div><div class="card small">① 이름 (가칭 에디션) ② 첫 카테고리 ③ 운영 법인 ④ 책임판매관리자 (대표가 자격이 되면 겸임 가능)</div></section>'+
+      '<b style="color:var(--ink)">세 쪽을 한 번에 열면 복잡함</b> → 에디션부터 열고 광고주, 공장 셀프 등록 순서로 넓힌다.<br><br>'+
+      '<b style="color:var(--ink)">제품 사고 책임</b> → 검증된 처방만 메뉴에 올리고 생산물 배상 보험과 안전성 평가를 갖춘다.<br><br>'+
+      '<b style="color:var(--ink)">선주문 배송 지연</b> → 발송 예정일을 미리 알리고, 늦어지면 보상과 환불 중 고르게 한다.<br><br>'+
+      '<b style="color:var(--ink)">공장 직거래</b> → 처방 전속 계약과 슬롯 우선권으로 묶는다.<br><br>'+
+      '<b style="color:var(--ink)">화장품 용기 부족</b> → 표준 용기 몇 종으로 통일하고 묶어서 미리 산다.<br><br>'+
+      '<b style="color:var(--ink)">규제 강화</b> → 오히려 기회다. SNS 거래의 판매자 정보·분쟁 대응 책임을 넓히는 흐름이라, 처음부터 플랫폼 결제와 판매자 표시로 간다.</div></section>'+
+    '<section><div class="sec-t">정할 것</div><div class="card small">① 이름 (에디션 / 팬메이드 / 콜라보랩 중) ② 첫 카테고리 ③ 운영 법인 ④ 책임판매관리자 ⑤ 첫 공장 3곳 ⑥ 첫 6개월 자금</div></section>'+
     '<section class="src"><div class="sec-t">근거 자료 (2026.11.5 조회)</div><ul style="padding-left:16px">'+
-    '<li>한국경제 2026.8.29 인플루언서 공구 수수료 <a href="https://www.hankyung.com/article/202608280232i" target="_blank" rel="noopener">hankyung.com</a></li>'+
-    '<li>CJ온스타일 온트너 출범 2026.9.2 <a href="https://corp.cjonstyle.com/ko/newsroom/press/104" target="_blank" rel="noopener">corp.cjonstyle.com</a></li>'+
-    '<li>CJ온큐베이팅 110억 펀드 2026.3.3 <a href="https://corp.cjonstyle.com/ko/newsroom/press/46" target="_blank" rel="noopener">corp.cjonstyle.com</a></li>'+
-    '<li>셀프코스 <a href="https://selfcos.com/" target="_blank" rel="noopener">selfcos.com</a> · 브래닛(코스인코리아 2025.6.24) <a href="https://www.cosinkorea.com/news/article.html?no=55554" target="_blank" rel="noopener">cosinkorea.com</a> · 동고리 <a href="https://www.donggori.com/" target="_blank" rel="noopener">donggori.com</a></li>'+
-    '<li>식약처 법령해석 2026.2.24 (위탁 제조해 자기 상표로 팔면 책임판매업 등록) <a href="https://www.law.go.kr/LSW/cgmExpcInfoP.do?cgmExpcDatSeq=2372971&mode=2&ofiClsCd=350123" target="_blank" rel="noopener">law.go.kr</a></li>'+
-    '<li>헤어케어 위탁생산 최소 수량 예: 향당 2,000개·총 5,000개, 개발 3주·생산 6주 <a href="https://raint.kr/en/hair-care-oem" target="_blank" rel="noopener">raint.kr</a></li>'+
-    '<li>최소 수량 3,000~5,000개·묶음 발주 <a href="https://nutricarecos.com/blog/%EB%B7%B0%ED%8B%B0-%EB%B8%8C%EB%9E%9C%EB%93%9C-%EB%9F%B0%EC%B9%AD-%EC%99%84%EC%A0%84-%EA%B0%80%EC%9D%B4%EB%93%9C" target="_blank" rel="noopener">nutricarecos.com</a></li>'+
-    '<li>유아른 연 매출 30억 (아임웹 인터뷰) <a href="https://imweb.me/blog?idx=410" target="_blank" rel="noopener">imweb.me</a> · 모렛 9개월 5억 (테넌트뉴스 2026.1.22) <a href="https://tnnews.co.kr/archives/261269" target="_blank" rel="noopener">tnnews.co.kr</a></li>'+
-    '</ul><p class="tiny">법·세금 내용은 공개 자료를 읽고 정리한 것이며 전문가 확인이 필요합니다.</p></section>'+ foot();
+      '<li>헤럴드경제 2026.10.1 SNS·공구 소비자 상담 증가 '+a('https://biz.heraldcorp.com/article/10890174','biz.heraldcorp.com')+'</li>'+
+      '<li>쿠키뉴스 2025.11.6 공구 책임 사각지대 '+a('https://www.kukinews.com/article/view/kuk202511060096','kukinews.com')+'</li>'+
+      '<li>데일리안 2026.8.27 공구 피해와 인플루언서 '+a('https://www.dailian.co.kr/news/view/1682714','dailian.co.kr')+'</li>'+
+      '<li>이데일리 2025.7.23 인플루언서 광고비 미지급 '+a('https://www.edaily.co.kr/News/Read?mediaCodeNo=257&newsId=03362006642237472','edaily.co.kr')+'</li>'+
+      '<li>Influencer Marketing Hub 2026 조사 정리 '+a('https://www.digitalapplied.com/blog/influencer-marketing-statistics-2026-data-points','digitalapplied.com')+'</li>'+
+      '<li>WFA 인플루언서 마케팅 보고서 2025 '+a('https://static1.squarespace.com/static/688be63ec5f34338414c8d8a/t/69c0e5d057b7452285815952/1774249424567/WFA_Effective+Influencer+Marketing.pdf','PDF')+'</li>'+
+      '<li>한국패션협회 2025 의류제조업 실태조사 (2026.2.26) '+a('http://www.koreafashion.org/','koreafashion.org')+'</li>'+
+      '<li>패션비즈 2026.4.12 봉제 공장 현실 '+a('https://fashionbiz.co.kr/article/225344','fashionbiz.co.kr')+'</li>'+
+      '<li>파이낸셜뉴스 2026.10.20 화장품 용기 부족·가동률 '+a('https://www.fnnews.com/news/202610201834292996','fnnews.com')+'</li>'+
+      '<li>한국경제 2026.8.29 공구 수수료 10~30% '+a('https://www.hankyung.com/article/202608280232i','hankyung.com')+'</li>'+
+      '<li>일간스포츠 2026.1.27 화해 공구 전환율 '+a('https://isplus.com/article/view/isp202601270055','isplus.com')+'</li>'+
+      '<li>인플리 '+a('https://ad.inflee.co/commerce','ad.inflee.co')+' · Collabstr '+a('https://collabstr.com/pricing','collabstr.com')+' · 브래닛(코스인코리아) '+a('https://www.cosinkorea.com/news/article.html?no=55554','cosinkorea.com')+'</li>'+
+      '<li>CJ온큐베이팅 110억 펀드 '+a('https://corp.cjonstyle.com/ko/newsroom/press/46','corp.cjonstyle.com')+' · 식약처 법령해석(책임판매업) '+a('https://www.law.go.kr/LSW/cgmExpcInfoP.do?cgmExpcDatSeq=2372971&mode=2&ofiClsCd=350123','law.go.kr')+'</li>'+
+      '<li>한스경제 2026.4.25 SNS 거래 규제·플랫폼 책임 '+a('http://www.hansbiz.co.kr/news/articleView.html?idxno=835198','hansbiz.co.kr')+'</li>'+
+      '<li>해외 분석: 크리에이터 마켓플레이스가 실패한 이유 (2026.2) '+a('https://jakabavdek.com/blog/creator-marketplaces.html','jakabavdek.com')+'</li>'+
+    '</ul><p class="tiny">숫자 중 “가정”은 공개 자료로 잡은 추정값이고, 법·세금 내용은 전문가 확인이 필요합니다.</p></section>'+ foot();
 }
 
 /* ---------- 라우터 ---------- */
 function render(){
   var h=(location.hash||'#home').slice(1), parts=h.split('/'), r=parts[0]||'home', v=document.getElementById('view'), html='', tab=r;
-  if(r==='menu'){ html=vMenu(); }
-  else if(r==='make'){ html=vMake(parts[1]); }
+  if(r==='creator'){ html=vCreator(); }
+  else if(r==='brand'){ html=vBrand(); }
+  else if(r==='factory'){ html=vFactory(); }
+  else if(r==='menu'){ html=vMenu(); tab='creator'; }
+  else if(r==='make'){ html=vMake(parts[1]); tab='creator'; }
   else if(r==='p'){ html=vPre(parts[1]); tab=''; }
-  else if(r==='me'){ html=vMe(); }
+  else if(r==='me'){ html=vMe(); tab='creator'; }
   else if(r==='plan'){ html=vPlan(); }
   else { r='home'; tab='home'; html=vHome(); }
   v.innerHTML=html; tabs(tab);
-  if(r==='home') bindHome(); if(r==='menu') bindMenu(); if(r==='make') bindMake(); if(r==='p') bindPre(parts[1]); if(r==='me') bindMe();
+  if(r==='creator') bindCreator(); if(r==='brand') bindBrand(); if(r==='factory') bindFactory(); if(r==='menu') bindMenu(); if(r==='make') bindMake(); if(r==='p') bindPre(parts[1]); if(r==='me') bindMe();
 }
 var lastRoute='';
 window.addEventListener('hashchange', function(){ var nr=(location.hash||'#home').split('/')[0]; render(); if(nr!==lastRoute || nr==='#p') window.scrollTo(0,0); lastRoute=nr; });
