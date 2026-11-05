@@ -182,7 +182,7 @@ const db = getFirestore(fb);
 const SUPPORT = JSON.parse(document.getElementById('supportData').textContent || '[]');
 const ROUTES = JSON.parse(document.getElementById('routeData').textContent || '[]');
 const CHECKED = '2026.11.5';
-const SHARE = 0.25, CROSS = 0.10, PFEE = 0.08, DEPOSIT = 1.0;
+const SHARE = 0.25, CROSS = 0.10, PFEE = 0.05, DEPOSIT = 1.0;
 const COST = {mist:5000, hair_oil:5000, hoodie:25400, sweat:21000, cap:18500};
 const SCENTS = [{k:'glow',n:'라이브 글로우',c:'#E7B46A'},{k:'soap',n:'새벽 비누',c:'#EBCB93'},{k:'fig',n:'무화과 우디',c:'#C68752'}];
 const MISTS = [{k:'glow',n:'라이브 글로우',c:'#F1DCE6'},{k:'soap',n:'새벽 비누',c:'#DCE9F1'},{k:'fig',n:'무화과 우디',c:'#E9E0CC'}];
@@ -483,7 +483,7 @@ function bindAddBtn(k){ const b=document.getElementById('addDoor'); if(b) b.oncl
 function investBody(){
   return `<section><div class="sec-t">투자 현황판 (실시간)</div><div class="kpi" id="ivK"><div class="loading">계산 중…</div></div></section>
   <section><div class="sec-t">생산 자금이 필요한 에디션</div><p class="tiny">선주문 대금은 받는 사람이 배송을 확인한 뒤 정산돼요. 그 전에 공장에 줄 생산비(착수금·잔금)를 투자자가 채워요. 필요 자금 = 목표 수량 × 생산 단가(가정). 모인 금액은 투자 의향의 합계예요.</p><div id="ivE"><div class="loading">불러오는 중…</div></div></section>
-  <section><div class="sec-t">회사(플랫폼)에 투자</div><div class="card small"><b style="color:var(--ink)">돈 버는 방법 (가정)</b><br>· 에디션 판매 이익: 1개당 판매가의 약 37~43% (헤어오일 3,000~5,000개 묶음 생산 기준)<br>· 성과형 판매 수수료 8%, 공장 슬롯 수수료 3%<br>· 손익분기: 월 고정비 3,000만 원이면 헤어오일 월 약 3,200개<div style="margin-top:12px"><button class="btn o full" id="ivCo">회사 투자 의향 남기기</button></div></div></section>
+  <section><div class="sec-t">회사(플랫폼)에 투자</div><div class="card small"><b style="color:var(--ink)">돈 버는 방법 (가정)</b><br>· 에디션 판매 이익: 1개당 판매가의 약 37~43% (헤어오일 3,000~5,000개 묶음 생산 기준)<br>· 성과형 판매 수수료 5%, 공장 슬롯 수수료 3%<br>· 손익분기: 월 고정비 3,000만 원이면 헤어오일 월 약 3,200개<div style="margin-top:12px"><button class="btn o full" id="ivCo">회사 투자 의향 남기기</button></div></div></section>
   <section><div class="note"><b>꼭 알아 두세요</b><br>시험판은 투자 의향만 받아요. 돈을 받지 않고 수익을 약속하지 않아요. 실제 투자 모집은 법에 맞는 방식(증권형 크라우드펀딩 중개업체를 통한 모집, 소수 투자자 대상 사모 등)으로 법률 검토를 마친 뒤에만 해요.</div></section>${beta()}`;
 }
 function bindInvest(){
@@ -615,7 +615,7 @@ function makeOffer(){
   V().innerHTML=`<section><div class="kick">상품 올리기</div><h2>상품과 커미션만 올리면<br>판매 파트너들이 팔아요.</h2><p class="sub">판매가 생길 때만 비용이 나가요. (시험판은 실제 결제·정산 없음)</p></section>
   <section><label class="field"><span>상품 이름</span><input id="oN" maxlength="40"></label><div class="grid2"><label class="field"><span>판매가 (원)</span><input id="oP" type="number" inputmode="numeric" value="30000"></label><label class="field"><span>파트너 커미션 (%)</span><input id="oC" type="number" inputmode="numeric" min="5" max="50" value="20"></label></div>
   <label class="field"><span>짧은 소개</span><textarea id="oD" rows="3" maxlength="200"></textarea></label><div class="res" id="oRes"></div><button class="btn o full" id="oSave" style="margin-top:12px">상품 올리기</button></section>${beta()}`;
-  const calc=()=>{ const p=+document.getElementById('oP').value||0, c=+document.getElementById('oC').value||0; document.getElementById('oRes').innerHTML=`<div class="tiny">1개 팔리면 브랜드에 남는 돈</div><div class="big">${won(p*(1-c/100-PFEE))}</div><div class="tiny">파트너 ${won(p*c/100)} · 플랫폼 8% ${won(p*PFEE)} (가정) · 판매 0개면 비용 0원</div>`; };
+  const calc=()=>{ const p=+document.getElementById('oP').value||0, c=+document.getElementById('oC').value||0; document.getElementById('oRes').innerHTML=`<div class="tiny">1개 팔리면 브랜드에 남는 돈</div><div class="big">${won(p*(1-c/100-PFEE))}</div><div class="tiny">파트너 ${won(p*c/100)} · 플랫폼 5% ${won(p*PFEE)} (가정) · 판매 0개면 비용 0원</div>`; };
   ['oP','oC'].forEach(i=>document.getElementById(i).oninput=calc); calc();
   document.getElementById('oSave').onclick=async()=>{ const name=document.getElementById('oN').value.trim(); if(!name){ toast('상품 이름을 넣어 주세요'); return; } const price=parseInt(document.getElementById('oP').value,10)||0, commission=Math.max(5,Math.min(50,parseInt(document.getElementById('oC').value,10)||20)); try{ await addDoc(collection(db,'offers'),{ ownerId:S.user.uid, brand:S.profile.name, name, price, commission, desc:document.getElementById('oD').value.trim(), sold:0, lastOrderId:'', createdAt:serverTimestamp() }); toast('상품을 올렸어요'); location.hash='#/mine'; }catch(err){ toast('실패: '+err.message); } };
 }
