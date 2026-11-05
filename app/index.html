@@ -163,6 +163,7 @@ const PRODUCTS = [
   {id:'sweat', name:'맨투맨', size:'S~XL', min:50, price:49000, lo:39000, hi:65000, weeks:'3~4주', type:'sweat', optLabel:'색', opts:COLORS},
   {id:'cap', name:'볼캡', size:'프리', min:200, price:39000, lo:32000, hi:49000, weeks:'2~3주 (묶음 생산)', type:'cap', optLabel:'색', opts:COLORS}
 ];
+const FCATS = {beauty:'화장품·향', apparel:'의류', cap:'모자', food:'식품', etc:'기타'};
 const STATUS = {pre:['선주문 중','o'], closed:['마감 · 생산 대기','b'], making:['생산 중','k'], shipped:['발송 완료','g'], refunded:['목표 미달 · 환불','']};
 const ROLES = {creator:'인플루언서', brand:'광고주', factory:'공장', fan:'구경·팬'};
 
@@ -268,7 +269,12 @@ function viewHome(){
   V().innerHTML = '<section><div class="kick">'+ROLES[r]+'</div><h1>'+esc(S.profile.name)+' 님, 반가워요.</h1><p class="sub">'+cta[2]+'</p><a class="btn o full" href="'+cta[1]+'">'+cta[0]+'</a></section>'+
     '<section><div class="sec-t">선주문 진행 중</div><div id="hPre"><div class="loading">불러오는 중…</div></div></section>'+
     '<section><div class="sec-t">생산·발송</div><div id="hMake"></div></section>'+
-    '<section><div class="sec-t">성과형 판매 상품 (광고주)</div><div id="hOffers"></div></section>'+beta();
+    '<section><div class="sec-t">성과형 판매 상품 (광고주)</div><div id="hOffers"></div></section>'+
+    '<section><div class="sec-t">협력 공장</div><div id="hFac"></div></section>'+beta();
+  sub(onSnapshot(query(collection(db,'factories'), limit(30)), snap=>{
+    const c=document.getElementById('hFac'); if(!c) return; const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+    c.innerHTML = list.length ? list.map(f=>'<div class="card"><div class="row between"><b>'+esc(f.name)+'</b><span class="pill">'+esc(FCATS[f.category]||'기타')+'</span></div><div class="small">'+esc(f.region||'지역 미입력')+' · 최소 '+(f.moq?Number(f.moq).toLocaleString('ko-KR')+'개':'협의')+'</div>'+(f.intro?'<div class="small" style="margin-top:4px">'+esc(f.intro)+'</div>':'')+'</div>').join('') : '<div class="empty">등록된 공장이 아직 없어요.</div>';
+  }));
   sub(onSnapshot(query(collection(db,'editions'), orderBy('createdAt','desc'), limit(60)), snap=>{
     const all=snap.docs.map(d=>({id:d.id,...d.data()}));
     const pre=all.filter(e=>e.status==='pre'), mk=all.filter(e=>e.status==='closed'||e.status==='making'||e.status==='shipped');
@@ -443,7 +449,12 @@ function viewMine(){
       el.innerHTML = list.length ? list.map(o=>'<div class="card"><div class="row between"><b>'+esc(o.name)+'</b><span class="pill">'+(o.sold||0)+'개</span></div><div class="small">판매액 '+won((o.sold||0)*o.price)+' · 인플루언서 커미션 '+o.commission+'%</div></div>').join('') : '<div class="empty">아직 올린 상품이 없어요.</div>';
     }));
   } else if(r==='factory'){
-    V().innerHTML='<section><div class="kick">내 현황</div><h2>'+esc(S.profile.name)+' 생산 슬롯</h2></section><div id="mSl"><div class="loading">불러오는 중…</div></div><a class="btn o full" href="#/make" style="margin-top:12px">슬롯 더 열기</a>'+beta();
+    V().innerHTML='<section><div class="kick">내 현황</div><h2>'+esc(S.profile.name)+'</h2></section><section><div class="sec-t">공장 정보 (모두에게 보여요)</div><div class="card" id="fInfo"><div class="loading" style="padding:10px 0">불러오는 중…</div></div></section><section><div class="sec-t">생산 슬롯</div><div id="mSl"><div class="loading">불러오는 중…</div></div><a class="btn o full" href="#/make" style="margin-top:12px">슬롯 더 열기</a></section>'+beta();
+    getDoc(doc(db,'factories',S.user.uid)).then(fd=>{
+      const f=fd.exists()?fd.data():{}; const box=document.getElementById('fInfo'); if(!box) return;
+      box.innerHTML='<label class="field"><span>공장 이름</span><input id="fiN" maxlength="30" value="'+esc(f.name||S.profile.name||'')+'"></label><div class="grid2"><label class="field"><span>주력 품목</span><select id="fiC">'+Object.entries(FCATS).map(([k,v])=>'<option value="'+k+'" '+(f.category===k?'selected':'')+'>'+v+'</option>').join('')+'</select></label><label class="field"><span>지역</span><input id="fiR" maxlength="20" placeholder="예: 경기 부천" value="'+esc(f.region||'')+'"></label></div><label class="field"><span>최소 주문 수량 (개)</span><input id="fiM" type="number" inputmode="numeric" min="0" value="'+esc(f.moq||'')+'"></label><label class="field"><span>한 줄 소개</span><input id="fiI" maxlength="60" value="'+esc(f.intro||'')+'"></label><button class="btn full" id="fiS">공장 정보 저장</button>';
+      document.getElementById('fiS').onclick=async()=>{ const name=document.getElementById('fiN').value.trim(); if(!name){ toast('공장 이름을 넣어 주세요'); return; } try{ await setDoc(doc(db,'factories',S.user.uid),{ ownerId:S.user.uid, name, category:document.getElementById('fiC').value, region:document.getElementById('fiR').value.trim(), moq:parseInt(document.getElementById('fiM').value||'0',10)||0, intro:document.getElementById('fiI').value.trim(), updatedAt:serverTimestamp() },{merge:true}); toast('공장 정보를 저장했어요'); }catch(err){ toast('실패: '+err.message); } };
+    }).catch(()=>{});
     sub(onSnapshot(query(collection(db,'slots'), where('ownerId','==',S.user.uid)), async snap=>{
       const el=document.getElementById('mSl'); if(!el) return; const list=snap.docs.map(d=>({id:d.id,...d.data()}));
       if(!list.length){ el.innerHTML='<div class="empty">아직 연 슬롯이 없어요.</div>'; return; }
