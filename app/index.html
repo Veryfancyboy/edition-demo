@@ -463,6 +463,7 @@ function viewDoor(k){
   const d=DOORS[k]; if(!d){ location.hash='#/home'; return; }
   const mine=S.profile&&has(k);
   let html=`<a class="small" href="#/home" style="display:inline-block;margin-top:14px;text-decoration:none">← 홈</a><section><div class="kick">${d.s}</div><h1>${d.n}</h1><p class="sub">${d.d}</p>${S.profile?(mine?'<span class="pill o">내 문</span>':'<button class="btn w s" id="addDoor">이 문 열기</button>'):'<a class="btn o full" href="#/start">시작하기</a>'}</section>`;
+  html+=benefitBox(k);
   if(k==='invest'){ V().innerHTML=html+investBody(); bindInvest(); bindAddBtn(k); return; }
   const info=DOOR_INFO[k];
   html+=`<section><div class="sec-t">이렇게 이어져요</div><div class="steps">${info.steps.map(s=>`<div>${esc(s)}</div>`).join('')}</div></section>`;
