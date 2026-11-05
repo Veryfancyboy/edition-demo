@@ -208,7 +208,7 @@ function tabs(cur){
   if(S.isAdmin) t.push(['admin','운영']);
   t.push(['me','내 정보']);
   document.getElementById('tabs').innerHTML = t.map(x=>'<a href="#/'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+ICON[x[0]]+x[1]+'</a>').join('');
-  const w=document.getElementById('who'); w.textContent = S.profile ? (ROLES[S.profile.role]+' · '+(S.profile.name||'')) : '시작하기';
+  const w=document.getElementById('who'); w.textContent = S.isAdmin ? '운영자' : S.profile ? (ROLES[S.profile.role]+' · '+(S.profile.name||'')) : '시작하기';
 }
 
 /* ---------- 라우터 ---------- */
@@ -283,7 +283,9 @@ function viewHome(){
   }));
 }
 function offerCard(o){ const mine = S.profile && S.profile.role==='creator'; return '<div class="card"><div class="row between"><div><b>'+esc(o.name)+'</b> <span class="tiny">'+esc(o.brand||'')+'</span><div class="small">'+won(o.price)+' · 판매하면 '+o.commission+'% ('+won(o.price*o.commission/100)+')</div></div><span class="pill">'+(o.sold||0)+'개 팔림</span></div>'+(o.desc?'<div class="small" style="margin-top:6px">'+esc(o.desc)+'</div>':'')+'<div class="row" style="margin-top:10px"><a class="btn w s" href="#/o/'+o.id+'">상품 보기</a>'+(mine?'<button class="btn s" data-link="'+o.id+'">내 판매 링크 복사</button>':'')+'</div></div>'; }
-function bindOfferButtons(root){ root.querySelectorAll('[data-link]').forEach(b=>b.onclick=async()=>{ const url=location.origin+location.pathname+'#/o/'+b.dataset.link+'/'+S.user.uid; try{ await navigator.clipboard.writeText(url); toast('판매 링크를 복사했어요'); }catch(e){ prompt('이 링크를 복사하세요', url); } }); }
+function linkSheet(title,url){ const sh=document.getElementById('sheet'), m=document.getElementById('modal'); sh.innerHTML='<h3>'+esc(title)+'</h3><p class="small">아래 링크를 길게 눌러 복사하세요.</p><label class="field"><input id="lkU" readonly value="'+esc(url)+'"></label><button class="btn w full" id="lkX">닫기</button>'; m.classList.add('on'); const i=document.getElementById('lkU'); i.focus(); i.select(); document.getElementById('lkX').onclick=()=>m.classList.remove('on'); m.onclick=ev=>{ if(ev.target===m) m.classList.remove('on'); }; }
+async function copyLink(title,url,okMsg){ try{ await navigator.clipboard.writeText(url); toast(okMsg); }catch(e){ linkSheet(title,url); } }
+function bindOfferButtons(root){ root.querySelectorAll('[data-link]').forEach(b=>b.onclick=()=>copyLink('내 판매 링크', location.origin+location.pathname+'#/o/'+b.dataset.link+'/'+S.user.uid, '판매 링크를 복사했어요')); }
 
 /* ---------- 에디션 (선주문) 페이지 ---------- */
 function viewEdition(id){
@@ -296,12 +298,13 @@ function viewEdition(id){
     V().innerHTML = '<a class="small" href="#/home" style="display:inline-block;margin-top:14px;text-decoration:none">← 홈</a>'+
       '<div class="preview" style="margin-top:8px">'+artFor(e)+'</div>'+
       '<section>'+statusPill(e)+'<h2 style="margin:8px 0 2px">'+esc(e.title)+' '+p.name+'</h2><div class="small">'+esc(e.handle||e.ownerName)+' 에디션 · '+p.size+' · '+esc(O(p,e.opt).n)+'</div><div style="font-size:26px;font-weight:900;margin-top:8px">'+won(e.price)+'</div></section>'+
-      '<div class="card"><div class="row between"><b>'+s+'개 주문</b><span class="small">목표 '+e.goal+'개</span></div><div class="bar'+(s>=e.goal?' g':'')+'" style="height:11px"><i style="width:'+pct+'%"></i></div><div class="small">'+(e.status==='pre' ? (left>0?'<b class="ac">'+left+'개</b> 더 모이면 생산을 시작해요. ':'목표를 넘었어요. 마감까지 계속 받아요. ')+'목표를 못 채우면 <b>전액 환불</b>돼요.' : (STATUS[e.status]||[''])[0])+'</div></div>'+
+      '<div class="card"><div class="row between"><b>'+s+'개 주문</b><span class="small">목표 '+e.goal+'개</span></div><div class="bar'+(s>=e.goal?' g':'')+'" style="height:11px"><i style="width:'+pct+'%"></i></div><div class="small">'+(e.status==='pre' ? (left>0?'<b class="ac">'+left+'개</b> 더 모이면 생산을 시작해요. ':'목표를 넘었어요. 마감까지 계속 받아요. ')+'목표를 못 채우면 <b>전액 환불</b>돼요.' : e.status==='refunded' ? '목표를 채우지 못해 모든 주문이 환불돼요.' : e.status==='shipped' ? '생산을 마치고 발송했어요.' : '선주문을 마감했어요. '+(e.status==='making'?'지금 생산 중이에요.':'공장 배정 뒤 생산을 시작해요.'))+'</div></div>'+
       '<section><div class="sec-t">진행 순서</div><div class="tl">'+steps.map((x,i)=>'<div class="s '+(i<idx?'done':i===idx?'now':'')+'"><b>'+x[0]+'</b><span>'+(i===0?(e.status==='pre'?dleft(e)+' · 목표 '+e.goal+'개':'완료'):i===2?p.weeks:'')+'</span></div>').join('')+'</div></section>'+
-      '<section><div class="sec-t">누가 만드나요</div><div class="card small"><b style="color:var(--ink)">기획</b> '+esc(e.handle||e.ownerName)+' (판매 수익의 일부를 받아요)<br><b style="color:var(--ink)">판매·품질 책임</b> 에디션(가칭)<br><b style="color:var(--ink)">제조</b> 협력 공장 (배정되면 표시)</div></section>'+
+      '<section><div class="sec-t">누가 만드나요</div><div class="card small"><b style="color:var(--ink)">기획</b> '+esc(e.handle||e.ownerName)+' (판매 수익의 일부를 받아요)<br><b style="color:var(--ink)">판매·품질 책임</b> 에디션(가칭)<br><b style="color:var(--ink)">제조</b> <span id="facName">'+(e.slotId?'불러오는 중…':'협력 공장 (배정되면 표시)')+'</span></div></section>'+
       '<div class="row" style="margin:10px 0 80px"><button class="btn w full" id="share">공유하기</button></div>'+
       (e.status==='pre' ? '<div class="sticky-cta"><div class="in"><button class="btn o full" id="buy">선주문하기 (시험) · '+won(e.price)+'</button></div></div>' : '')+beta();
-    document.getElementById('share').onclick=async()=>{ const url=location.origin+location.pathname+'#/p/'+e.id; if(navigator.share){ try{ await navigator.share({title:e.title+' '+p.name, url}); }catch(x){} } else { try{ await navigator.clipboard.writeText(url); toast('링크를 복사했어요'); }catch(x){ prompt('링크', url); } } };
+    document.getElementById('share').onclick=async()=>{ const url=location.origin+location.pathname+'#/p/'+e.id; if(navigator.share){ try{ await navigator.share({title:e.title+' '+p.name, url}); }catch(x){} } else { copyLink('에디션 링크', url, '링크를 복사했어요'); } };
+    if(e.slotId){ getDoc(doc(db,'slots',e.slotId)).then(sd=>{ const f=document.getElementById('facName'); if(f) f.textContent = sd.exists()? (sd.data().factoryName+' · '+sd.data().week+' 생산') : '협력 공장'; }).catch(()=>{}); }
     const b=document.getElementById('buy'); if(b) b.onclick=()=>buySheet(e);
   }));
 }
@@ -376,7 +379,7 @@ function makeOffer(){
   V().innerHTML='<section><div class="kick">성과형 상품 등록</div><h2>상품과 커미션만 올리면<br>인플루언서들이 팔아요.</h2><p class="sub">판매가 생길 때만 비용이 나가요. (시험판은 실제 결제·정산 없음)</p></section>'+
   '<section><label class="field"><span>상품 이름</span><input id="oN" maxlength="40"></label><div class="grid2"><label class="field"><span>판매가 (원)</span><input id="oP" type="number" inputmode="numeric" value="30000"></label><label class="field"><span>인플루언서 커미션 (%)</span><input id="oC" type="number" inputmode="numeric" min="5" max="50" value="20"></label></div>'+
   '<label class="field"><span>짧은 소개</span><textarea id="oD" rows="3" maxlength="200"></textarea></label><div class="res" id="oRes"></div><button class="btn o full" id="oSave" style="margin-top:12px">상품 올리기</button></section>'+beta();
-  const calc=()=>{ const p=+document.getElementById('oP').value||0, c=+document.getElementById('oC').value||0; document.getElementById('oRes').innerHTML='<div class="tiny">1개 팔리면</div><div class="big">'+won(p*(1-c/100-0.08))+'</div><div class="tiny">인플루언서 '+won(p*c/100)+' · 플랫폼 8% '+won(p*0.08)+' (가정) · 판매 0개면 비용 0원</div>'; };
+  const calc=()=>{ const p=+document.getElementById('oP').value||0, c=+document.getElementById('oC').value||0; document.getElementById('oRes').innerHTML='<div class="tiny">1개 팔리면 브랜드에 남는 돈</div><div class="big">'+won(p*(1-c/100-0.08))+'</div><div class="tiny">인플루언서 '+won(p*c/100)+' · 플랫폼 8% '+won(p*0.08)+' (가정) · 판매 0개면 비용 0원</div>'; };
   ['oP','oC'].forEach(i=>document.getElementById(i).oninput=calc); calc();
   document.getElementById('oSave').onclick=async()=>{
     const name=document.getElementById('oN').value.trim(); if(!name){ toast('상품 이름을 넣어 주세요'); return; }
@@ -386,8 +389,8 @@ function makeOffer(){
 }
 function makeSlot(){
   V().innerHTML='<section><div class="kick">생산 슬롯 열기</div><h2>빈 생산 일정을 열어 두면<br>확정된 에디션이 채워요.</h2></section>'+
-  '<section><div class="grid2"><label class="field"><span>품목</span><select id="sC"><option value="mist">헤어&바디 미스트</option><option value="hair_oil">헤어 오일</option><option value="hoodie">후드티</option><option value="sweat">맨투맨</option><option value="cap">볼캡</option></select></label><label class="field"><span>생산 주</span><input id="sW" placeholder="예: 12월 2주"></label></div>'+
-  '<div class="grid2"><label class="field"><span>수량 (최대)</span><input id="sQ" type="number" inputmode="numeric" value="300"></label><label class="field"><span>1개당 생산 단가 (원)</span><input id="sP" type="number" inputmode="numeric" value="18000"></label></div>'+
+  '<section><div class="grid2"><label class="field"><span>품목</span><select id="sC" onchange="document.getElementById(\'sP\').value=({mist:5000,hair_oil:5000,hoodie:25400,sweat:21000,cap:18500})[this.value];document.getElementById(\'sP\').dispatchEvent(new Event(\'input\'))"><option value="mist">헤어&바디 미스트</option><option value="hair_oil">헤어 오일</option><option value="hoodie">후드티</option><option value="sweat">맨투맨</option><option value="cap">볼캡</option></select></label><label class="field"><span>생산 주</span><input id="sW" placeholder="예: 12월 2주"></label></div>'+
+  '<div class="grid2"><label class="field"><span>수량 (최대)</span><input id="sQ" type="number" inputmode="numeric" value="300"></label><label class="field"><span>1개당 생산 단가 (원, 가정)</span><input id="sP" type="number" inputmode="numeric" value="5000"></label></div>'+
   '<div class="res" id="sRes"></div><button class="btn o full" id="sSave" style="margin-top:12px">슬롯 열기</button></section>'+beta();
   const calc=()=>{ const q=+document.getElementById('sQ').value||0, p=+document.getElementById('sP').value||0, t=q*p; document.getElementById('sRes').innerHTML='<div class="tiny">슬롯이 다 차면 생산 대금</div><div class="big">'+won(t)+'</div><div class="tiny">착수 때 '+won(t/2)+' 먼저 · 납품·검수 뒤 '+won(t/2)+' (제안 조건)</div>'; };
   ['sQ','sP'].forEach(i=>document.getElementById(i).oninput=calc); calc();
@@ -410,7 +413,7 @@ function viewOffer(id, seller){
     document.getElementById('obuy').onclick=async()=>{
       const btn=document.getElementById('obuy'); btn.disabled=true;
       try{ const ref=doc(collection(db,'offerOrders')); const bt=writeBatch(db);
-        bt.set(ref,{ uid:S.user.uid, offerId:o.id, creatorId:seller||'', brandId:o.ownerId, qty:1, amount:o.price, status:'test', createdAt:serverTimestamp() });
+        bt.set(ref,{ uid:S.user.uid, offerId:o.id, creatorId:seller||'', brandId:o.ownerId, qty:1, amount:o.price, commission:o.commission||0, status:'test', createdAt:serverTimestamp() });
         bt.update(doc(db,'offers',o.id),{ sold:increment(1), lastOrderId:ref.id });
         await bt.commit(); toast('시험 구매 완료'); }catch(err){ toast('실패: '+err.message); }
       btn.disabled=false;
@@ -430,8 +433,8 @@ function viewMine(){
       el.innerHTML = list.length ? '<div class="card"><div class="small">선주문이 다 생산되면 내 몫 (예상)</div><div style="font-size:24px;font-weight:900">'+won(tot)+'</div></div>'+list.map(edCard).join('') : '<div class="empty">아직 에디션이 없어요. <a href="#/make">첫 에디션 만들기</a></div>';
     }));
     sub(onSnapshot(query(collection(db,'offerOrders'), where('creatorId','==',S.user.uid)), snap=>{
-      const el=document.getElementById('mSales'); if(!el) return; const n=snap.size, amt=snap.docs.reduce((s,d)=>s+(d.data().amount||0),0);
-      el.innerHTML='<div class="card small">내 링크로 팔린 수 <b style="color:var(--ink)">'+n+'건</b> · 판매액 '+won(amt)+'</div>';
+      const el=document.getElementById('mSales'); if(!el) return; const n=snap.size, amt=snap.docs.reduce((s,d)=>s+(d.data().amount||0),0), com=snap.docs.reduce((s,d)=>s+(d.data().amount||0)*(d.data().commission||20)/100,0);
+      el.innerHTML='<div class="card small">내 링크로 팔린 수 <b style="color:var(--ink)">'+n+'건</b> · 판매액 '+won(amt)+'<br>내 커미션 (예상) <b style="color:var(--ink)">'+won(com)+'</b></div>';
     }, ()=>{}));
   } else if(r==='brand'){
     V().innerHTML='<section><div class="kick">내 현황</div><h2>'+esc(S.profile.name)+' 상품</h2></section><div id="mOf"><div class="loading">불러오는 중…</div></div><a class="btn o full" href="#/make" style="margin-top:12px">상품 더 올리기</a>'+beta();
