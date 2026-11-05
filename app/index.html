@@ -439,6 +439,17 @@ function viewChannels(){
   drawR();
 }
 
+
+const BENEFITS = {
+  make:{one:'내 이름 건 제품을 돈·재고·등록 없이', items:['초기 비용 0원, 목표를 넘을 때만 생산','판매가의 25%를 1개마다 (헤어 오일 22,900원이면 5,725원)','제작·CS·환불·광고 표시는 플랫폼이 책임','누적 3,000개를 넘기면 내 브랜드 독립 지원 (예정)'], perk:'선착순 10명 첫 에디션 30%'},
+  factory:{one:'확정 주문, 묶음 물량, 대금 보증', items:['선주문으로 확인된 물량만 배정','여러 에디션을 묶어 한 배치를 채움','배정 때 착수금 50%, 검수 뒤 7일 안 잔금','등록·노출 무료, 배정된 생산액의 3%만'], perk:'선착순 5곳 6개월 수수료 0%'},
+  sell:{one:'팔린 만큼만, 광고 표시 걱정 없이', items:['판매 0개면 비용 0원 (커미션 + 수수료 5%)','팔로워 수가 아니라 실제 판매 기록으로 파트너 추천','광고 표시 문구 자동, 금지 표현 점검','크리에이터 협업 에디션으로 한정판 출시'], perk:'선착순 20곳 3개월 수수료 0%'},
+  partner:{one:'높은 커미션, 재고·CS 없이', items:['브랜드가 정한 커미션 (권장 15~30%)','에디션은 판매액의 10%','재고·배송·CS 없음, 링크만 공유','실적이 쌓이면 내 에디션 출시 우선권','수당은 내가 직접 판 것에만 (모집 수당 없음)'], perk:'선착순 100명 첫 2개월 커미션 +5%p'},
+  invest:{one:'검증된 숫자, 관문식 집행', items:['선주문·생산·판매 숫자를 실시간으로','목표를 넘은 에디션에만 생산 자금','관문을 넘을 때마다 다음 단계','수익 약속 없이 의향만 받아요'], perk:'월간 리포트·신규 에디션 미리보기 (돈이 아닌 혜택)'},
+  buy:{one:'환불 보장, 지연 보상, 한정판', items:['목표 미달이면 자동 전액 환불','약속일보다 7일 넘게 늦으면 결제 금액 10% 환불 (예정)','선주문가가 가장 싸요','에디션마다 한정판 번호 라벨 (예정)'], perk:'첫 선주문 구매자 앞 번호(1~50번) 우선'},
+  channel:{one:'검증된 신제품을 작게 시작', items:['선주문·재구매 데이터와 함께 제안','20개부터 위탁·소량 입고 (예정)','책임판매업자 등록·표시·시험 성적 완비','그 매장에서만 파는 전용 에디션'], perk:'선착순 10곳 위탁 조건·전용 에디션'}
+};
+function benefitBox(k){ const b=BENEFITS[k]; if(!b) return ''; return `<section><div class="card" style="border-color:var(--ac)"><div class="sec-t" style="color:var(--ac)">이 문에서 얻는 것</div><b style="font-size:16px">${b.one}</b><ul style="margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--sub);line-height:1.6">${b.items.map(x=>`<li>${x}</li>`).join('')}</ul><div style="margin-top:10px"><span class="pill o">창립 혜택 (예정)</span> <span class="small">${b.perk}</span></div></div></section>`; }
 /* ---------- 문 페이지 ---------- */
 const DOOR_INFO = {
   make:{steps:['제품을 고르고 내 이름을 넣어요','2주 동안 팬 선주문을 받아요','목표를 넘으면 공장에서 만들어 보내요. 못 넘으면 전액 환불'], cta:['에디션 만들기','#/new/edition'], list:'진행 중인 에디션'},
@@ -536,6 +547,7 @@ function viewEdition(id, partner){
     <div class="preview" style="margin-top:8px">${artFor(e)}</div>
     <section>${statusPill(e)}<h2 style="margin:8px 0 2px">${esc(e.title)} ${p.name}</h2><div class="small">${esc(e.handle||e.ownerName)} 에디션 · ${p.size} · ${esc(O(p,e.opt).n)}</div><div style="font-size:26px;font-weight:900;margin-top:8px">${won(e.price)}</div></section>
     <div class="card"><div class="row between"><b>${s}개 주문</b><span class="small">목표 ${e.goal}개</span></div><div class="bar${s>=e.goal?' g':''}" style="height:11px"><i style="width:${pct}%"></i></div><div class="small">${e.status==='pre' ? (left>0?`<b class="ac">${left}개</b> 더 모이면 생산을 시작해요. `:'목표를 넘었어요. 마감까지 계속 받아요. ')+'목표를 못 채우면 <b>전액 환불</b>돼요.' : e.status==='refunded' ? '목표를 채우지 못해 모든 주문이 환불돼요.' : e.status==='shipped' ? '생산을 마치고 발송했어요.' : '선주문을 마감했어요. '+(e.status==='making'?'지금 생산 중이에요.':'공장 배정 뒤 생산을 시작해요.')}</div></div>
+    <div class="card small" style="margin-top:10px"><b style="color:var(--ink)">구매자 약속</b> · 목표 미달이면 자동 전액 환불 · 약속일보다 7일 넘게 늦으면 10% 환불 (예정) · 한정판 번호 라벨 (예정)</div>
     ${showInv?`<div class="card" id="fundBox"><div class="row between"><b>생산 자금</b><span class="pill b">투자자에게만 보여요</span></div><div class="small" id="fundTxt">계산 중…</div><div class="bar g"><i id="fundBar" style="width:0%"></i></div>${(e.status==='pre'||e.status==='closed')?'<button class="btn s full" id="fundBtn" style="margin-top:8px">생산 자금 의향 넣기</button>':''}</div>`:''}
     ${showPart?`<div class="card"><b>이 에디션 팔아 주기</b><div class="small">내 링크로 팔리면 판매액의 10%를 받아요 (가정).</div><button class="btn s full" id="partBtn" style="margin-top:8px">내 판매 링크 복사</button></div>`:''}
     <section><div class="sec-t">진행 순서</div><div class="tl">${steps.map((x,i)=>`<div class="s ${i<idx?'done':i===idx?'now':''}"><b>${x[0]}</b><span>${i===0?(e.status==='pre'?dleft(e)+' · 목표 '+e.goal+'개':'완료'):i===2?p.weeks:''}</span></div>`).join('')}</div></section>
