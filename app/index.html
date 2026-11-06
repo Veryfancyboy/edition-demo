@@ -150,7 +150,7 @@ svg text{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Not
 <body>
 <div class="app">
   <header class="top">
-    <a class="logo" href="#/home"><span>에디<i>션</i></span><span class="tag">시험판 v0.2</span></a>
+    <a class="logo" href="#/home"><span>에디<i>션</i></span><span class="tag">시험판 v0.3</span></a>
     <a class="who" id="who" href="#/me">…</a>
   </header>
   <main id="view"><div class="loading">불러오는 중…</div></main>
@@ -194,7 +194,7 @@ const PRODUCTS = [
   {id:'sweat', name:'맨투맨', size:'S~XL', min:50, price:49000, lo:39000, hi:65000, weeks:'3~4주', type:'sweat', optLabel:'색', opts:COLORS},
   {id:'cap', name:'볼캡', size:'프리', min:200, price:39000, lo:32000, hi:49000, weeks:'2~3주 (묶음 생산)', type:'cap', optLabel:'색', opts:COLORS}
 ];
-const STATUS = {pre:['선주문 중','o'], closed:['마감 · 생산 대기','b'], making:['생산 중','k'], shipped:['발송 완료','g'], refunded:['목표 미달 · 환불','']};
+const STATUS = {prep:['준비 중 · 샘플 승인','k'], pre:['선주문 중','o'], closed:['마감 · 생산 대기','b'], making:['생산 중','k'], shipped:['발송 완료','g'], refunded:['목표 미달 · 환불',''], cancelled:['해지 (선주문 전)','']};
 const DOORS = {
   make:{n:'만들고 싶어요', s:'내 이름 건 제품', d:'인플루언서·창작자·창업자가 재고 없이 선주문으로 시작해요.'},
   factory:{n:'만들어 드려요', s:'공장·제작사', d:'확정된 주문만 생산 슬롯으로 받아요.'},
@@ -285,7 +285,7 @@ function render(){
   const h=(location.hash||'#/home').replace(/^#\/?/,''); const qi=h.indexOf('?'); const pth=qi>=0?h.slice(0,qi):h; const params=new URLSearchParams(qi>=0?h.slice(qi+1):'');
   const parts=pth.split('/'); const r=parts[0]||'home';
   if(!S.user){ V().innerHTML='<div class="loading">불러오는 중…</div>'; return; }
-  const open=['start','p','o','admin','support','channels','door','home',''];
+  const open=['start','p','o','admin','support','channels','door','home','terms',''];
   if(!S.profile && !open.includes(r)){ location.hash='#/start'; return; }
   let tab=r;
   try{
@@ -296,6 +296,8 @@ function render(){
     else if(r==='p'){ tab=''; viewEdition(parts[1], parts[2]||''); }
     else if(r==='o'){ tab=''; viewOffer(parts[1], parts[2]||''); }
     else if(r==='new'||r==='make'){ tab='new'; viewNew(r==='make'?'':(parts[1]||''), params); }
+    else if(r==='terms'){ tab='home'; viewTerms(); }
+    else if(r==='ed'){ tab='mine'; viewManage(parts[1]); }
     else if(r==='mine') viewMine();
     else if(r==='crm'){ tab='admin'; viewCRM(parts[1]); }
     else if(r==='admin') viewAdmin();
@@ -328,7 +330,7 @@ function viewStart(){
   const pr=S.profile||{}; const sel=new Set(rolesOf(S.profile)); const keep={name:pr.name||'', handle:pr.handle||'', followers:pr.followers||''};
   function html(){
     const needHandle = sel.has('make')||sel.has('partner');
-    return `<section><div class="kick">에디션 시험판 v0.2</div><h1>무엇을 하고 싶으세요?</h1><p class="sub">여러 개 골라도 돼요. 고른 문에 맞는 화면을 보여 드려요.</p></section>
+    return `<section><div class="kick">에디션 시험판 v0.3</div><h1>무엇을 하고 싶으세요?</h1><p class="sub">여러 개 골라도 돼요. 고른 문에 맞는 화면을 보여 드려요.</p></section>
     <div class="doors" id="dsel">${DK.map(k=>`<button class="door ${sel.has(k)?'mine':''}" data-k="${k}">${sel.has(k)?'<i class="badge">선택</i>':''}${icon(k)}<b>${DOORS[k].n}</b><span>${DOORS[k].s}</span></button>`).join('')}</div>
     <section><label class="field"><span>이름 (닉네임·상호)</span><input id="fName" maxlength="30" value="${esc(keep.name)}"></label>
     ${needHandle? `<label class="field"><span>내 계정 (@아이디)</span><input id="fHandle" maxlength="30" value="${esc(keep.handle)}" placeholder="@my_handle"></label><div class="grid2"><label class="field"><span>주 플랫폼</span><select id="fPlat">${['인스타그램','유튜브','틱톡','블로그'].map(x=>`<option ${pr.platform===x?'selected':''}>${x}</option>`).join('')}</select></label><label class="field"><span>팔로워 수</span><input id="fFol" type="number" inputmode="numeric" min="0" value="${esc(keep.followers)}"></label></div>`:''}
@@ -360,9 +362,10 @@ function myActions(){
 }
 function viewHome(){
   const me=S.profile;
-  V().innerHTML=`<section><div class="kick">에디션 시험판 v0.2</div><h1>만들고 싶은 사람부터<br>팔 곳까지, 한 앱에서 이어요.</h1><div class="flow">${['만들기','투자','생산','판매','구매','팔 곳'].map((x,i)=>(i?'<i>→</i>':'')+x).join(' ')}</div>${me?'':'<a class="btn o full" href="#/start" style="margin-top:14px">내 문 고르고 시작하기</a>'}</section>
+  V().innerHTML=`<section><div class="kick">에디션 시험판 v0.3</div><h1>만들고 싶은 사람부터<br>팔 곳까지, 한 앱에서 이어요.</h1><div class="flow">${['만들기','투자','생산','판매','구매','팔 곳'].map((x,i)=>(i?'<i>→</i>':'')+x).join(' ')}</div>${me?'':'<a class="btn o full" href="#/start" style="margin-top:14px">내 문 고르고 시작하기</a>'}</section>
   <div class="doors">${DK.map(doorTile).join('')}${svcTile('support')}${svcTile('channels')}</div>
   ${me? myActions() : ''}
+  <a class="btn w full" href="#/terms" style="margin-top:12px">표준 조건표 · 품질 관문 · 크리에이터 몫 계산기</a>
   <section><div class="sec-t">선주문 진행 중</div><div id="hPre"><div class="loading">불러오는 중…</div></div></section>
   <section><div class="sec-t">만들어 주세요 (사고 싶은 사람들의 요청)</div><div id="hWish"><div class="loading">불러오는 중…</div></div><a class="btn w full" href="#/new/wish" style="margin-top:10px">나도 요청하기</a></section>
   <section><div class="sec-t">생산·발송</div><div id="hMake"></div></section>
@@ -444,7 +447,7 @@ function viewChannels(){
 
 
 const BENEFITS = {
-  make:{one:'내 이름 건 제품을 돈·재고·등록 없이', items:['초기 비용 0원, 목표를 넘을 때만 생산','판매가의 25%를 1개마다 (헤어 오일 22,900원이면 5,725원)','제작·CS·환불·광고 표시는 플랫폼이 책임','누적 3,000개를 넘기면 내 브랜드 독립 지원 (예정)'], perk:'선착순 10명 첫 에디션 30%'},
+  make:{one:'내 이름 건 제품을 돈·재고·등록 없이, 품질은 내가 승인', items:['투자 0원 기본형: 판매량 따라 15% → 20% → 25% 자동 상향 (표준 조건표)','투자하면 더: 공동 투자형 +5%p, 직접 투자형은 내 브랜드','사양서·샘플·출고를 내가 승인해야 판매 (품질 거부권)','실시간 판매 화면·원가 공개 장부·정산일 보장·장부 열람권','제작·CS·환불·광고 표시는 플랫폼이 책임'], perk:'선착순 10명 첫 에디션 몫 +5%p'},
   factory:{one:'확정 주문, 묶음 물량, 대금 보증', items:['선주문으로 확인된 물량만 배정','여러 에디션을 묶어 한 배치를 채움','배정 때 착수금 50%, 검수 뒤 7일 안 잔금','등록·노출 무료, 배정된 생산액의 3%만'], perk:'선착순 5곳 6개월 수수료 0%'},
   sell:{one:'팔린 만큼만, 광고 표시 걱정 없이', items:['판매 0개면 비용 0원 (커미션 + 수수료 5%)','팔로워 수가 아니라 실제 판매 기록으로 파트너 추천','광고 표시 문구 자동, 금지 표현 점검','크리에이터 협업 에디션으로 한정판 출시'], perk:'선착순 20곳 3개월 수수료 0%'},
   partner:{one:'높은 커미션, 재고·CS 없이', items:['브랜드가 정한 커미션 (권장 15~30%)','에디션은 판매액의 10%','재고·배송·CS 없음, 링크만 공유','실적이 쌓이면 내 에디션 출시 우선권','수당은 내가 직접 판 것에만 (모집 수당 없음)'], perk:'선착순 100명 첫 2개월 커미션 +5%p'},
@@ -452,10 +455,10 @@ const BENEFITS = {
   buy:{one:'환불 보장, 지연 보상, 한정판', items:['목표 미달이면 자동 전액 환불','약속일보다 7일 넘게 늦으면 결제 금액 10% 환불 (예정)','선주문가가 가장 싸요','에디션마다 한정판 번호 라벨 (예정)'], perk:'첫 선주문 구매자 앞 번호(1~50번) 우선'},
   channel:{one:'검증된 신제품을 작게 시작', items:['선주문·재구매 데이터와 함께 제안','20개부터 위탁·소량 입고 (예정)','책임판매업자 등록·표시·시험 성적 완비','그 매장에서만 파는 전용 에디션'], perk:'선착순 10곳 위탁 조건·전용 에디션'}
 };
-function benefitBox(k){ const b=BENEFITS[k]; if(!b) return ''; return `<section><div class="card" style="border-color:var(--ac)"><div class="sec-t" style="color:var(--ac)">이 문에서 얻는 것</div><b style="font-size:16px">${b.one}</b><ul style="margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--sub);line-height:1.6">${b.items.map(x=>`<li>${x}</li>`).join('')}</ul><div style="margin-top:10px"><span class="pill o">창립 혜택 (예정)</span> <span class="small">${b.perk}</span></div></div></section>`; }
+function benefitBox(k){ const b=BENEFITS[k]; if(!b) return ''; return `<section><div class="card" style="border-color:var(--ac)"><div class="sec-t" style="color:var(--ac)">이 문에서 얻는 것</div><b style="font-size:16px">${b.one}</b><ul style="margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--sub);line-height:1.6">${b.items.map(x=>`<li>${x}</li>`).join('')}</ul><div style="margin-top:10px"><span class="pill o">창립 혜택 (예정)</span> <span class="small">${b.perk}</span></div>${k==='make'?'<a class="btn w full" href="#/terms" style="margin-top:10px">표준 조건표 · 내 몫 계산기</a>':''}</div></section>`; }
 /* ---------- 문 페이지 ---------- */
 const DOOR_INFO = {
-  make:{steps:['제품을 고르고 내 이름을 넣어요','2주 동안 팬 선주문을 받아요','목표를 넘으면 공장에서 만들어 보내요. 못 넘으면 전액 환불'], cta:['에디션 만들기','#/new/edition'], list:'진행 중인 에디션'},
+  make:{steps:['제품과 계약 방식(투자 0원부터)을 골라요','사양서·샘플을 내가 승인하면 2주 선주문을 열어요','목표를 넘으면 만들고, 출고도 내가 승인해요. 못 넘으면 전액 환불'], cta:['에디션 만들기','#/new/edition'], list:'진행 중인 에디션'},
   factory:{steps:['공장 정보를 올려요 (품목·지역·최소 수량)','비어 있는 생산 일정을 슬롯으로 열어요','선주문이 확정된 에디션이 슬롯에 배정돼요'], cta:['공장 정보·슬롯 관리','#/mine'], list:'만들어 주세요 (생길 수요)'},
   sell:{steps:['상품과 커미션을 올려요','판매 파트너들이 자기 링크로 팔아요','팔린 만큼만 수수료를 내요'], cta:['상품 올리기','#/new/offer'], list:'판매 파트너를 찾는 상품'},
   partner:{steps:['팔고 싶은 상품이나 에디션을 골라요','내 판매 링크를 복사해서 올려요','그 링크로 팔린 만큼 커미션을 받아요'], cta:['내 판매 현황','#/mine'], list:'팔 수 있는 상품'},
@@ -543,18 +546,19 @@ function viewEdition(id, partner){
   sub(onSnapshot(doc(db,'editions',id), async d=>{
     if(!d.exists()){ V().innerHTML='<div class="empty" style="margin-top:30px">찾을 수 없는 에디션이에요.</div>'; return; }
     const e={id:d.id,...d.data()}, p=P(e.product), s=e.sold||0, pct=Math.min(100,Math.round(s/e.goal*100)), left=Math.max(0,e.goal-s);
-    const steps=[['선주문','pre'],['마감·생산 대기','closed'],['생산','making'],['발송','shipped']];
+    const steps=[['샘플 승인','prep'],['선주문','pre'],['마감·생산 대기','closed'],['생산','making'],['발송','shipped']];
     const idx=Math.max(0, steps.findIndex(x=>x[1]===e.status));
     const uid=S.user?S.user.uid:'';
     const showInv=(S.profile&&has('invest'))||S.isAdmin, showPart=S.profile&&has('partner')&&e.status==='pre'&&e.ownerId!==uid;
     V().innerHTML=`<a class="small" href="#/home" style="display:inline-block;margin-top:14px;text-decoration:none">← 홈</a>
     <div class="preview" style="margin-top:8px">${artFor(e)}</div>
     <section>${statusPill(e)}<h2 style="margin:8px 0 2px">${esc(e.title)} ${p.name}</h2><div class="small">${esc(e.handle||e.ownerName)} 에디션 · ${p.size} · ${esc(O(p,e.opt).n)}</div><div style="font-size:26px;font-weight:900;margin-top:8px">${won(e.price)}</div></section>
-    <div class="card"><div class="row between"><b>${s}개 주문</b><span class="small">목표 ${e.goal}개</span></div><div class="bar${s>=e.goal?' g':''}" style="height:11px"><i style="width:${pct}%"></i></div><div class="small">${e.status==='pre' ? (left>0?`<b class="ac">${left}개</b> 더 모이면 생산을 시작해요. `:'목표를 넘었어요. 마감까지 계속 받아요. ')+'목표를 못 채우면 <b>전액 환불</b>돼요.' : e.status==='refunded' ? '목표를 채우지 못해 모든 주문이 환불돼요.' : e.status==='shipped' ? '생산을 마치고 발송했어요.' : '선주문을 마감했어요. '+(e.status==='making'?'지금 생산 중이에요.':'공장 배정 뒤 생산을 시작해요.')}</div></div>
-    <div class="card small" style="margin-top:10px"><b style="color:var(--ink)">구매자 약속</b> · 목표 미달이면 자동 전액 환불 · 약속일보다 7일 넘게 늦으면 10% 환불 (예정) · 한정판 번호 라벨 (예정)</div>
+    <div class="card"><div class="row between"><b>${s}개 주문</b><span class="small">목표 ${e.goal}개</span></div><div class="bar${s>=e.goal?' g':''}" style="height:11px"><i style="width:${pct}%"></i></div><div class="small">${e.status==='prep' ? '크리에이터가 최종 샘플을 승인하면 2주 선주문이 열려요.' : e.status==='cancelled' ? '선주문 전에 해지된 에디션이에요.' : e.status==='pre' ? (left>0?`<b class="ac">${left}개</b> 더 모이면 생산을 시작해요. `:'목표를 넘었어요. 마감까지 계속 받아요. ')+'목표를 못 채우면 <b>전액 환불</b>돼요.' : e.status==='refunded' ? '목표를 채우지 못해 모든 주문이 환불돼요.' : e.status==='shipped' ? '생산을 마치고 발송했어요.' : '선주문을 마감했어요. '+(e.status==='making'?'지금 생산 중이에요.':'공장 배정 뒤 생산을 시작해요.')}</div></div>
+    <div class="card small" style="margin-top:10px"><b style="color:var(--ink)">구매자 약속</b> · 목표 미달이면 자동 전액 환불 · 크리에이터가 샘플·출고를 직접 승인 · 30일 품질 보증 (교환·환불) · 약속일보다 7일 넘게 늦으면 10% 환불 (예정) · 한정판 번호 라벨 (예정)</div>
     ${showInv?`<div class="card" id="fundBox"><div class="row between"><b>생산 자금</b><span class="pill b">투자자에게만 보여요</span></div><div class="small" id="fundTxt">계산 중…</div><div class="bar g"><i id="fundBar" style="width:0%"></i></div>${(e.status==='pre'||e.status==='closed')?'<button class="btn s full" id="fundBtn" style="margin-top:8px">생산 자금 의향 넣기</button>':''}</div>`:''}
     ${showPart?`<div class="card"><b>이 에디션 팔아 주기</b><div class="small">내 링크로 팔리면 판매액의 10%를 받아요 (가정).</div><button class="btn s full" id="partBtn" style="margin-top:8px">내 판매 링크 복사</button></div>`:''}
-    <section><div class="sec-t">진행 순서</div><div class="tl">${steps.map((x,i)=>`<div class="s ${i<idx?'done':i===idx?'now':''}"><b>${x[0]}</b><span>${i===0?(e.status==='pre'?dleft(e)+' · 목표 '+e.goal+'개':'완료'):i===2?p.weeks:''}</span></div>`).join('')}</div></section>
+    <section><div class="sec-t">진행 순서</div><div class="tl">${steps.map((x,i)=>`<div class="s ${i<idx?'done':i===idx?'now':''}"><b>${x[0]}</b><span>${x[1]==='prep'?(e.status==='prep'?'품질 관문 ①~③':'완료'):x[1]==='pre'?(e.status==='pre'?dleft(e)+' · 목표 '+e.goal+'개':(i<idx?'완료':'')):x[1]==='making'?p.weeks:''}</span></div>`).join('')}</div></section>
+    ${qualityTrack(e)}${(e.ownerId===uid||S.isAdmin)?`<a class="btn w full" href="#/ed/${e.id}" style="margin-top:4px">관리 · 품질 관문·판매·정산·장부</a>`:''}
     <section><div class="sec-t">누가 만드나요</div><div class="card small"><b style="color:var(--ink)">기획</b> ${esc(e.handle||e.ownerName)} (판매 수익의 일부를 받아요)<br><b style="color:var(--ink)">판매·품질 책임</b> 에디션(가칭)<br><b style="color:var(--ink)">제조</b> <span id="facName">${e.slotId?'불러오는 중…':'협력 공장 (배정되면 표시)'}</span></div>${proposeBtn('edition',e)}</section>
     <div class="row" style="margin:10px 0 80px"><button class="btn w full" id="share">공유하기</button></div>
     ${e.status==='pre'?`<div class="sticky-cta"><div class="in"><button class="btn o full" id="buy">선주문하기 (시험) · ${won(e.price)}</button></div></div>`:''}${beta()}`;
@@ -598,29 +602,40 @@ function viewNew(kind, params){
 }
 function makeEdition(wishId){
   if(gate('make')) return;
-  const d={product:'mist', opt:'glow', title:'MY EDITION', price:18900, goal:200, wishId:''};
+  const d={product:'mist', opt:'glow', title:'MY EDITION', price:18900, goal:200, wishId:'', ctype:'basic', agree:false};
   const handle=S.profile.handle||('@'+String(S.profile.name||'me').replace(/\s+/g,'_'));
   function html(){ const p=P(d.product), o=O(p,d.opt); if(d.goal<p.min) d.goal=p.min;
-    return `<section><div class="kick">내 에디션 만들기</div><h2>고르고, 이름 넣고,<br>선주문을 열어요.</h2>${d.wishId?'<div class="note">만들어 주세요 요청에서 시작했어요.</div>':''}</section>
+    return `<section><div class="kick">내 에디션 만들기</div><h2>고르고, 조건을 정하고,<br>샘플을 승인하면 선주문을 열어요.</h2>${d.wishId?'<div class="note">만들어 주세요 요청에서 시작했어요.</div>':''}</section>
     <div class="preview" id="pv">${art(p.type,o.c,d.title,handle)}</div>
     <section><div class="sec-t">1. 기본 제품</div><div class="tiles" id="tl">${PRODUCTS.map(x=>`<button class="tile ${x.id===p.id?'on':''}" data-p="${x.id}">${art(x.type,x.opts[0].c,'','')}${x.name}</button>`).join('')}</div><p class="tiny" style="margin-top:6px">최소 ${p.min}개 · 마감 후 ${p.weeks}</p></section>
     <section><div class="sec-t">2. ${p.optLabel}</div><div class="sw" id="sw">${p.opts.map(x=>`<button class="swb ${x.k===o.k?'on':''}" data-o="${x.k}"><i style="background:${x.c}"></i>${x.n}</button>`).join('')}</div></section>
     <section><label class="field"><span>에디션 이름 (12자까지)</span><input id="fT" maxlength="12" value="${esc(d.title)}"></label>
     <div class="card"><div class="row between small"><b style="color:var(--ink)">판매가</b><b id="mp" style="color:var(--ink)">${won(d.price)}</b></div><input type="range" id="fP" min="${p.lo}" max="${p.hi}" step="500" value="${d.price}" style="width:100%;accent-color:#E4572E">
     <div class="row between small" style="margin-top:8px"><b style="color:var(--ink)">목표 수량</b><b id="mg" style="color:var(--ink)">${d.goal}개</b></div><input type="range" id="fG" min="${p.min}" max="${p.min*5}" step="${p.min>=200?10:5}" value="${d.goal}" style="width:100%;accent-color:#E4572E"></div></section>
+    <section><div class="row between"><div class="sec-t" style="margin:0">3. 계약 방식</div><a class="small" href="#/terms">표준 조건표 보기</a></div><div id="ctl" style="margin-top:8px">${Object.entries(CT).map(([k,c])=>`<button class="card" data-ct="${k}" style="display:block;width:100%;text-align:left;cursor:pointer;${d.ctype===k?'border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset':''}"><div class="row between"><b>${d.ctype===k?'● ':'○ '}${c.n}</b><span class="pill">${c.s}</span></div><div class="small" style="margin-top:4px">${c.d}</div></button>`).join('')}</div></section>
     <div class="res" id="res"></div>
-    <section><button class="btn o full" id="mk">선주문 열기 (2주)</button></section>${beta()}`;
+    <section><div class="card small"><b style="color:var(--ink)">품질 관문</b> 만들어도 바로 팔지 않아요. 사양서 → 1차 샘플 → 최종 샘플을 내가 승인해야 2주 선주문이 열리고, 출고도 내가 승인해야 시작돼요. 30일 품질 보증은 플랫폼이 책임져요.</div>
+    <label class="small" style="display:flex;gap:8px;align-items:flex-start;margin-top:10px"><input type="checkbox" id="fAg" ${d.agree?'checked':''} style="margin-top:3px"> 표준 조건표 ${TERMS.version}과 조건 요약서 내용에 동의해요 (시험, 법적 효력 없음)</label>
+    <button class="btn w full" id="mkSheet" style="margin-top:8px">조건 요약서 미리 보기</button>
+    <button class="btn o full" id="mk" style="margin-top:8px">에디션 만들기 (샘플 승인 뒤 선주문)</button></section>${beta()}`;
   }
-  function res(){ const mine=d.goal*d.price*SHARE; document.getElementById('res').innerHTML=`<div class="tiny">목표 ${d.goal}개를 채우면 내 몫 (25%)</div><div class="big">${won(mine)}</div><div class="tiny">1개당 ${won(d.price*SHARE)} · 사업자가 아니면 원천징수 3.3% 뒤 ${won(mine*0.967)}</div>`; }
+  function res(){ const el=document.getElementById('res'); if(!el) return; const bonus=d.ctype==='coinvest'?TERMS.coBonus:0, mine=tierPay(d.price,d.goal,bonus);
+    el.innerHTML = d.ctype==='direct' ? `<div class="tiny">직접 투자형은 매출에서 실비(영수증 그대로)와 운영 수수료(공급가 15%, 최소 200만 원)를 빼고 나머지 전부를 받아요</div><div class="big" style="font-size:22px">계산기로 확인</div><div class="tiny"><a href="#/terms">표준 조건표 · 내 몫 계산기</a></div>` : `<div class="tiny">목표 ${d.goal}개를 채우면 내 몫 (${CT[d.ctype].n} · 구간 누진${bonus?' +5%p':''})</div><div class="big">${won(mine)}</div><div class="tiny">실효 ${(mine/((d.price*d.goal)||1)*100).toFixed(1)}% · 300개·1,000개를 넘으면 다음 구간 · 사업자가 아니면 원천징수 3.3% 뒤 ${won(mine*0.967)}</div>`; }
   function pv(){ const p=P(d.product); document.getElementById('pv').innerHTML=art(p.type,O(p,d.opt).c,d.title,handle); }
+  function cur(){ return {title:(d.title||'MY EDITION').trim()||'MY EDITION', product:d.product, price:Math.round(d.price), goal:Math.round(d.goal)}; }
   function bind(){
     document.getElementById('tl').onclick=e=>{ const b=e.target.closest('[data-p]'); if(!b) return; const np=P(b.dataset.p); d.product=np.id; d.opt=np.opts[0].k; d.price=np.price; d.goal=np.min; V().innerHTML=html(); bind(); };
     document.getElementById('sw').onclick=e=>{ const b=e.target.closest('[data-o]'); if(!b) return; d.opt=b.dataset.o; document.querySelectorAll('.swb').forEach(x=>x.classList.toggle('on',x===b)); pv(); };
     document.getElementById('fT').oninput=e=>{ d.title=e.target.value||' '; pv(); };
     document.getElementById('fP').oninput=e=>{ d.price=+e.target.value; document.getElementById('mp').textContent=won(d.price); res(); };
     document.getElementById('fG').oninput=e=>{ d.goal=+e.target.value; document.getElementById('mg').textContent=d.goal+'개'; res(); };
-    document.getElementById('mk').onclick=async()=>{ const btn=document.getElementById('mk'); btn.disabled=true; btn.textContent='만드는 중…';
-      try{ const ref=await addDoc(collection(db,'editions'),{ ownerId:S.user.uid, ownerName:S.profile.name, handle, product:d.product, opt:d.opt, title:(d.title||'MY EDITION').trim()||'MY EDITION', price:Math.round(d.price), goal:Math.round(d.goal), deadline:Date.now()+14*86400000, status:'pre', sold:0, fundPledged:0, slotId:'', lastOrderId:'', lastIntentId:'', wishId:d.wishId||'', createdAt:serverTimestamp() }); toast('선주문을 열었어요'); location.hash='#/p/'+ref.id; }catch(err){ btn.disabled=false; btn.textContent='선주문 열기 (2주)'; toast('실패: '+err.message); } };
+    document.getElementById('ctl').onclick=e=>{ const b=e.target.closest('[data-ct]'); if(!b) return; d.ctype=b.dataset.ct; const y=window.scrollY; V().innerHTML=html(); bind(); window.scrollTo(0,y); };
+    document.getElementById('fAg').onchange=e=>{ d.agree=e.target.checked; };
+    document.getElementById('mkSheet').onclick=async()=>{ const c=cur(); sheet(termSheetHtml(c, d.ctype, await termsHash(c, d.ctype))); };
+    document.getElementById('mk').onclick=async()=>{ if(!d.agree){ toast('조건 요약서에 동의해 주세요'); return; } const btn=document.getElementById('mk'); btn.disabled=true; btn.textContent='만드는 중…';
+      try{ const c=cur(), h=await termsHash(c, d.ctype);
+        const ref=await addDoc(collection(db,'editions'),{ ownerId:S.user.uid, ownerName:S.profile.name, handle, product:d.product, opt:d.opt, title:c.title, price:c.price, goal:c.goal, deadline:null, status:'prep', sold:0, fundPledged:0, slotId:'', lastOrderId:'', lastIntentId:'', wishId:d.wishId||'', contract:{type:d.ctype, version:TERMS.version, hash:h, agreedAt:Date.now(), agreedBy:S.profile.name||''}, gates:Object.fromEntries(GATES.map(([k])=>[k,{st:'todo'}])), approvals:{}, createdAt:serverTimestamp() });
+        logE(ref.id, '에디션을 만들고 조건 요약서에 동의 ('+CT[d.ctype].n+', 지문 '+h+')'); toast('만들었어요. 샘플 승인 뒤 선주문을 열 수 있어요'); location.hash='#/ed/'+ref.id; }catch(err){ btn.disabled=false; btn.textContent='에디션 만들기 (샘플 승인 뒤 선주문)'; toast('실패: '+err.message); } };
     res();
   }
   V().innerHTML=html(); bind();
@@ -696,7 +711,7 @@ function viewMine(){
   sec.push(box('mProp','내가 보낸 제안·요청'));
   V().innerHTML=`<section><div class="kick">내 현황</div><h2>${esc(S.profile.name)}</h2><div class="chips">${R.map(k=>`<a class="chip on" href="#/door/${k}">${DOORS[k].n}</a>`).join('')}<a class="chip" href="#/start">문 바꾸기</a></div></section>`+sec.join('')+beta();
   const put=(id,h)=>{ const el=document.getElementById(id); if(el) el.innerHTML=h; return el; };
-  if(R.includes('make')) sub(onSnapshot(query(collection(db,'editions'), where('ownerId','==',uid)), snap=>{ const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); const tot=list.reduce((s,e)=>s+(e.sold||0)*e.price*SHARE,0); put('mMake', list.length? `<div class="card"><div class="small">선주문이 다 생산되면 내 몫 (예상, 25%)</div><div style="font-size:22px;font-weight:900">${won(tot)}</div></div>`+list.map(edCard).join('') : '<div class="empty">아직 에디션이 없어요. <a href="#/new/edition">첫 에디션 만들기</a></div>'); }));
+  if(R.includes('make')) sub(onSnapshot(query(collection(db,'editions'), where('ownerId','==',uid)), snap=>{ const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); const tot=list.reduce((s,e)=>s+(payoutOf(e)||0),0); put('mMake', list.length? `<div class="card"><div class="small">지금까지 판매분 내 몫 (표준 조건표 구간 누진 자동 계산, 직접 투자형 제외)</div><div style="font-size:22px;font-weight:900">${won(tot)}</div></div>`+list.map(e=>edCard(e)+`<a class="btn w s" href="#/ed/${e.id}" style="display:block;text-align:center;margin:-2px 0 14px">관리 · ${e.gates?GATES.filter(([k])=>gateSt(e,k)==='ok').length+'/6 승인':'품질 관문 없음'} · 판매·정산·장부</a>`).join('') : '<div class="empty">아직 에디션이 없어요. <a href="#/new/edition">첫 에디션 만들기</a></div>'); }));
   if(R.includes('partner')){ let A=[],B=[]; const d=()=>{ const amtA=A.reduce((s,x)=>s+(x.amount||0),0), comA=A.reduce((s,x)=>s+(x.amount||0)*(x.commission||20)/100,0), amtB=B.reduce((s,x)=>s+(x.amount||0),0), comB=amtB*CROSS; put('mPart',`<div class="card small">상품 링크 판매 <b style="color:var(--ink)">${A.length}건</b> · ${won(amtA)} → 커미션 ${won(comA)}<br>에디션 링크 판매 <b style="color:var(--ink)">${B.reduce((s,x)=>s+(x.qty||0),0)}개</b> · ${won(amtB)} → 10% ${won(comB)} (가정)<div style="font-size:20px;font-weight:900;color:var(--ink);margin-top:6px">합계 ${won(comA+comB)}</div></div><a class="btn w full" href="#/door/partner" style="margin-top:10px">팔 상품 더 고르기</a>`); }; d(); sub(onSnapshot(query(collection(db,'offerOrders'), where('creatorId','==',uid)), s=>{ A=s.docs.map(x=>x.data()); d(); }, ()=>{})); sub(onSnapshot(query(collection(db,'preorders'), where('partnerId','==',uid)), s=>{ B=s.docs.map(x=>x.data()); d(); }, ()=>{})); }
   if(R.includes('sell')) sub(onSnapshot(query(collection(db,'offers'), where('ownerId','==',uid)), snap=>{ const list=snap.docs.map(d=>({id:d.id,...d.data()})); put('mSell', (list.length? list.map(o=>`<div class="card"><div class="row between"><b>${esc(o.name)}</b><span class="pill">${o.sold||0}개</span></div><div class="small">판매액 ${won((o.sold||0)*o.price)} · 파트너 커미션 ${o.commission}%</div></div>`).join('') : '<div class="empty">아직 올린 상품이 없어요.</div>')+'<a class="btn w full" href="#/new/offer" style="margin-top:10px">상품 올리기</a>'); }));
   if(R.includes('factory')) mineFactory(uid);
@@ -761,6 +776,7 @@ function crmDetail(list,id){
   <div class="card" style="border-color:var(--ac)"><div class="sec-t" style="color:var(--ac)">5. 제품 기획 ${x.change&&x.change.label?`<span class="pill">${esc(x.change.label)}</span>`:''}</div><b style="font-size:17px">${esc(b.product||'')}</b>${b.concept?`<div class="small">콘셉트 · ${esc(b.concept)}</div>`:''}${x.first&&x.first.product&&x.first.product!==b.product?row('1순위(분석)',esc(x.first.product)):''}${x.change&&x.change.reason?row('바꾼 이유',esc(x.change.reason)):''}${row('사양',esc(b.spec||''))}${row('왜 이 사람인가',esc(b.story||''))}${row('시장과 차별점',esc(b.market||''))}${row('판매가',b.price?won(b.price):'')}${row('출시 영상 아이디어',esc(b.launch_hook||''))}${x.conflict?row('겹침 확인',esc(x.conflict.lv+' · '+x.conflict.own)):''}</div>
   <section><div class="sec-t">6. 제작과 규제</div><div class="card">${row('제작 분야',esc(b.category||''))}${row('만들 곳',esc(mf.makers||''))}${row('최소 수량',esc(mf.moq||''))}${row('원가(VAT 별도, 추정)',esc(mf.cost||''))}${row('준비 비용',esc(mf.setup||''))}${row('기간',esc(mf.lead||''))}${row('난이도',esc(mf.level||''))}${row('규제',esc(b.reg||mf.reg||''))}${row('위험',esc(b.risk||''))}</div></section>
   <section><div class="sec-t">7. 수요와 수익 (가정)</div><div class="res"><div class="tiny">${esc(dm.basis||'')}</div><div class="big">${dm.lo||dm.hi?nf(dm.lo)+'~'+nf(dm.hi)+'개':'-'}</div><div class="tiny">${dm.goal?'목표 '+nf(dm.goal)+'개 · '+esc(dm.status||''):''}${dm.pool?' · 공동 생산: '+esc(dm.pool):''}</div></div>${x.econ?`<div class="card" style="padding:4px 10px;margin-top:8px"><table><tr><td>판매가</td><td class="r">${won(b.price)}</td></tr><tr><td>개당 원가</td><td class="r">${won(x.econ.unitCost)}</td></tr><tr><td>개당 이익</td><td class="r"><b>${won(x.econ.profit)}</b> (${x.econ.margin}%)</td></tr><tr><td>권장가(이익률 15%)</td><td class="r">${won(x.econ.recPrice)}</td></tr><tr><td>목표 달성 시 크리에이터 몫</td><td class="r">${won(x.econ.creatorTotal)}</td></tr></table>${x.change&&x.change.priceNote?`<div class="tiny" style="margin:4px 0">${esc(x.change.priceNote)}</div>`:''}</div>`:''}</section>
+  ${crmV3(x)}
   ${x.alt&&x.alt.product?`<div class="card small"><b style="color:var(--ink)">대안 제품</b> ${esc(x.alt.product)}${x.alt.why?' · '+esc(x.alt.why):''}</div>`:''}
   <section><div class="sec-t">진행 상태</div><div class="card"><select id="dSt" class="adm" style="max-width:none;width:100%;font-size:15px;padding:9px">${Object.entries(PST).map(([k,v])=>`<option value="${k}" ${(x.status||'new')===k?'selected':''}>${v}</option>`).join('')}</select><label class="field"><span>메모</span><textarea id="dMemo" rows="3">${esc(x.memo||'')}</textarea></label><button class="btn full" id="dSave">저장</button></div></section>
   <section><div class="sec-t">첫 메시지 초안 <span class="pill o">승인 전 발송 금지</span></div><div class="card small" style="white-space:pre-wrap;color:var(--ink)">${esc(x.dm||'')}</div><button class="btn w full" id="dCopy" style="margin-top:8px">초안 복사</button></section>
@@ -790,8 +806,8 @@ function viewAdmin(){
   let EDS=[], SLOTS=[], PRE=[], INV=[];
   const sum=()=>{ const el=document.getElementById('aSum'); if(!el) return; const totAmt=PRE.reduce((s,p)=>s+(p.amount||0),0), inv=INV.reduce((s,x)=>s+(x.amount||0),0); el.innerHTML=`<div class="kpi"><div class="card"><div class="tiny">에디션</div><b>${EDS.length}개</b></div><div class="card"><div class="tiny">시험 선주문</div><b>${PRE.length}건 · ${man(totAmt)}</b></div><div class="card"><div class="tiny">투자 의향</div><b>${INV.length}건 · ${man(inv)}</b></div><div class="card"><div class="tiny">생산 슬롯</div><b>${SLOTS.length}개</b></div></div>`; };
   const drawEd=()=>{ sum(); const el=document.getElementById('aEd'); if(!el) return; const byEd={}; PRE.forEach(p=>{ byEd[p.editionId]=(byEd[p.editionId]||0)+1; });
-    el.innerHTML = EDS.length ? '<div class="card" style="padding:4px 10px"><table><tr><th>에디션</th><th class="r">주문</th><th>상태 · 슬롯</th></tr>'+EDS.map(e=>`<tr><td><a href="#/p/${e.id}"><b>${esc(e.title)}</b></a><div class="tiny">${esc(e.handle||e.ownerName)} · ${P(e.product).name}${e.fundPledged?' · 자금 의향 '+man(e.fundPledged):''}</div></td><td class="r">${e.sold||0}/${e.goal}<div class="tiny">${byEd[e.id]||0}건</div></td><td><select data-st="${e.id}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${e.status===k?'selected':''}>${v[0]}</option>`).join('')}</select><br><select data-sl="${e.id}" style="margin-top:4px"><option value="">슬롯 없음</option>${SLOTS.filter(s=>s.category===e.product).map(s=>`<option value="${s.id}" ${e.slotId===s.id?'selected':''}>${esc(s.factoryName)} ${esc(s.week)}</option>`).join('')}</select></td></tr>`).join('')+'</table></div>' : '<div class="empty">에디션이 없어요.</div>';
-    el.querySelectorAll('[data-st]').forEach(s=>s.onchange=async()=>{ try{ await updateDoc(doc(db,'editions',s.dataset.st),{status:s.value}); toast('상태를 바꿨어요'); }catch(err){ toast('실패: '+err.message); } });
+    el.innerHTML = EDS.length ? '<div class="card" style="padding:4px 10px"><table><tr><th>에디션</th><th class="r">주문</th><th>상태 · 슬롯</th></tr>'+EDS.map(e=>`<tr><td><a href="#/p/${e.id}"><b>${esc(e.title)}</b></a> <a class="tiny" href="#/ed/${e.id}">관리</a><div class="tiny">${esc(e.handle||e.ownerName)} · ${P(e.product).name}${e.gates?' · 관문 '+GATES.filter(([k])=>gateSt(e,k)==='ok').length+'/6':''}${e.fundPledged?' · 자금 의향 '+man(e.fundPledged):''}</div></td><td class="r">${e.sold||0}/${e.goal}<div class="tiny">${byEd[e.id]||0}건</div></td><td><select data-st="${e.id}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${e.status===k?'selected':''}>${v[0]}</option>`).join('')}</select><br><select data-sl="${e.id}" style="margin-top:4px"><option value="">슬롯 없음</option>${SLOTS.filter(s=>s.category===e.product).map(s=>`<option value="${s.id}" ${e.slotId===s.id?'selected':''}>${esc(s.factoryName)} ${esc(s.week)}</option>`).join('')}</select></td></tr>`).join('')+'</table></div>' : '<div class="empty">에디션이 없어요.</div>';
+    el.querySelectorAll('[data-st]').forEach(s=>s.onchange=async()=>{ const e0=EDS.find(z=>z.id===s.dataset.st)||{}; if(e0.gates && s.value==='pre' && gateSt(e0,'golden')!=='ok'){ toast('③ 최종 샘플 승인 전에는 선주문을 열 수 없어요'); s.value=e0.status; return; } if(e0.gates && s.value==='shipped' && gateSt(e0,'ship')!=='ok'){ toast('⑤ 출고 승인 전에는 발송 처리할 수 없어요'); s.value=e0.status; return; } try{ await updateDoc(doc(db,'editions',s.dataset.st), s.value==='shipped'?{status:s.value, shippedAt:Date.now()}:{status:s.value}); logE(s.dataset.st,'운영자가 상태 변경 → '+(STATUS[s.value]||[s.value])[0]); toast('상태를 바꿨어요'); }catch(err){ toast('실패: '+err.message); } });
     el.querySelectorAll('[data-sl]').forEach(s=>s.onchange=async()=>{ try{ await updateDoc(doc(db,'editions',s.dataset.sl),{slotId:s.value}); toast('슬롯을 배정했어요'); }catch(err){ toast('실패: '+err.message); } });
     const sl=document.getElementById('aSl'); if(sl) sl.innerHTML = SLOTS.length ? SLOTS.map(s=>{ const filled=EDS.filter(e=>e.slotId===s.id).reduce((a,e)=>a+(e.sold||0),0); return `<div class="card small"><b style="color:var(--ink)">${esc(s.factoryName)}</b> · ${P(s.category).name} · ${esc(s.week)} · ${filled}/${s.capacity}개 · 단가 ${won(s.unitCost)}</div>`; }).join('') : '<div class="empty">열린 슬롯이 없어요.</div>';
   };
@@ -815,8 +831,199 @@ function viewMe(){
   <a class="btn w full" href="#/start">문·정보 바꾸기</a>
   <section><div class="sec-t">휴대폰에 앱으로 설치</div><div class="card small">아이폰: 사파리 아래 공유 버튼 → <b style="color:var(--ink)">홈 화면에 추가</b><br>안드로이드: 크롬 오른쪽 위 메뉴 → <b style="color:var(--ink)">앱 설치</b> 또는 홈 화면에 추가</div></section>
   <section><div class="sec-t">계정</div><div class="card small">이 기기 전용 계정이에요. 브라우저 기록을 지우면 다시 만들어야 해요. 정식판에서는 이메일·카카오 로그인을 붙여요.<div class="tiny" style="margin-top:6px">계정 번호 ${esc(S.user.uid.slice(0,8))}…</div></div>${S.isAdmin?'<button class="btn w full" id="lo" style="margin-top:10px">운영자 로그아웃</button>':'<a class="btn w full" href="#/admin" style="margin-top:10px">운영자 로그인</a>'}</section>
-  <section><div class="sec-t">이 시험판에 대해</div><div class="card small">v0.2 · 2026.11.5 · 7개 문(만들기·공장·판매·판매 파트너·투자·구매·팔 곳), 정부 지원 사업 연결, 팔 곳 연결, 운영 화면. 실제 결제·투자 모집·정식 로그인은 다음 단계예요.</div></section>${beta()}`;
+  <section><div class="sec-t">이 시험판에 대해</div><div class="card small">v0.3 · 2026.11.6 · 표준 조건표·내 몫 계산기, 품질 관문 6단계(크리에이터 승인), 크리에이터 관리 화면(실시간 판매·원가 공개 장부·정산·지연이자·요청·변경 이력) 추가.<br>v0.2 · 2026.11.5 · 7개 문(만들기·공장·판매·판매 파트너·투자·구매·팔 곳), 정부 지원 사업 연결, 팔 곳 연결, 운영 화면. 실제 결제·투자 모집·정식 로그인은 다음 단계예요.</div></section>${beta()}`;
   const lo=document.getElementById('lo'); if(lo) lo.onclick=async()=>{ await signOut(auth); toast('로그아웃했어요'); };
+}
+
+/* ---------- v0.3: 표준 조건표 · 품질 관문 · 신뢰 장치 ---------- */
+const TERMS = { version:'v1 초안 (2026.11.6)', tiers:[[300,0.15],[1000,0.20],[1e12,0.25]], rerun:0.03, coBonus:0.05, coShare:0.5, directFee:0.15, directMin:2000000, settleDays:15, lateRate:0.12, auditGap:0.03, warrantyDays:30 };
+const CT = {
+  basic:{n:'기본형', s:'투자 0원', d:'판매가의 15%(1~300개) · 20%(301~1,000개) · 25%(1,001개~)를 구간별로 누진 적용해요. 같은 제품 재주문은 +3%p. 목표 미달이어도 손해 0원.'},
+  coinvest:{n:'공동 투자형', s:'비용 50% 투자', d:'기본형 구간 몫 +5%p. 투자금은 고객 대금 정산 때 가장 먼저 돌려받아요. 목표 미달이면 선주문 전에 쓴 비용의 50%를 부담해요.'},
+  direct:{n:'직접 투자형', s:'내 브랜드', d:'비용 100%를 내고 재고·브랜드를 소유해요. 매출 − 실비(영수증 그대로) − 운영 수수료(공급가의 15%, 최소 200만 원) = 나머지 전부.'},
+  external:{n:'외부 자금 연결형', s:'투자 0원', d:'회사 투자금이나 제조사 참여로 자금을 마련해요. 몫은 기본형과 같아요. 일반인 대상 투자 모집은 인가받은 중개업자를 통해서만 해요.'}
+};
+const GATES = [
+  ['spec','① 사양서','소재·치수·허용 오차·포장·표시사항을 함께 확정해요.'],
+  ['s1','② 1차 샘플','크리에이터가 직접 써 보고 수정을 요청해요.'],
+  ['golden','③ 최종 샘플','골든 샘플 2개를 봉인 보관해요. 승인해야 선주문이 열려요.'],
+  ['inspect','④ 생산 검사','해외 1,000개 이상은 제3자 검사, 그 미만은 현지 전수 검품, 국내는 입고 전수 검품이에요.'],
+  ['ship','⑤ 출고 승인','검사 보고서·사진·불량률을 보고 승인해야 출고해요.'],
+  ['warranty','⑥ 30일 보증','품질 불만은 교환·환불(플랫폼 부담). 불량률이 2%를 넘으면 재작업·회수해요.']
+];
+const GST = { todo:['준비 중',''], review:['확인 필요','o'], fix:['수정 요청','k'], ok:['승인','g'] };
+const TRUST = [
+  ['같은 조건 공개','표준 조건표를 공개하고 모든 계약에 붙여요. 더 좋은 조건을 다른 크리에이터에게 주면 기존 크리에이터에게도 자동 적용해요(최혜 조건).'],
+  ['조정은 미리 숫자로','구간·재주문 가산·방식별 몫을 계약서 표로 정해요. 말로 한 약속은 효력이 없고, 바꿀 때는 서면 부속합의서로만 해요.'],
+  ['실시간 판매 화면','주문 수·현재 구간·예상 정산금을 운영자와 같은 데이터로 바로 봐요.'],
+  ['원가 공개','견적서·최종 단가·세금계산서·검사 보고서를 에디션 장부에 올려요. 공동·직접 투자형의 실비는 영수증으로만 빼요.'],
+  ['정산일 보장','발송 완료 후 15일 안에 항목별 정산서와 함께 지급해요. 늦으면 연 12% 지연이자가 자동으로 계산돼요.'],
+  ['장부 열람권','에디션마다 1번, 크리에이터가 정한 회계사가 장부를 확인해요. 3% 넘게 불리한 차이가 나오면 열람 비용은 플랫폼이 내고 차액을 지급해요.'],
+  ['돈의 안전','고객 대금은 결제대금예치(에스크로)로 보관하고 목표 미달이면 자동 환불해요. 크리에이터 투자금은 따로 관리하고 정산 때 가장 먼저 돌려줘요.'],
+  ['품질 거부권·면책','사양서·샘플·출고를 크리에이터가 승인해요. 제조 결함 책임은 플랫폼과 제조사가 지고 크리에이터는 면책이에요(생산물배상책임보험).'],
+  ['쉬운 해지·권리 보호','선주문 전에는 언제든 해지할 수 있어요(기본형 비용 0원). 이름·얼굴은 이 에디션에만 쓰고, 금형·디자인은 종료 때 원가로 인수할 수 있어요.'],
+  ['표시 안내','추천·보증 심사지침에 맞는 \'제가 수익을 받는 제품\' 표시 문구를 준비해 드려요.']
+];
+const LKINDS = ['견적서','최종 단가','세금계산서','검사 보고서','샘플비','출고·택배','광고비','결제 수수료','기타'];
+const RTYPES = {audit:'장부 열람 요청', question:'질문', terminate:'선주문 전 해지'};
+function mw(n){ n=Math.round(n||0); return (n<0?'−':'')+man(Math.abs(n)); }
+function tsMs(t){ if(!t) return 0; if(typeof t==='number') return t; if(t.toMillis) return t.toMillis(); if(t.seconds) return t.seconds*1000; return 0; }
+function fmtD(t){ const ms=tsMs(t); if(!ms) return '-'; const d=new Date(ms); return (d.getMonth()+1)+'.'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function tierPay(price, qty, bonus){ let left=Math.max(0,qty||0), prev=0, pay=0; for(const [cap,r] of TERMS.tiers){ const n=Math.min(left, cap-prev); if(n>0){ pay+=n*price*(r+(bonus||0)); left-=n; } prev=cap; if(left<=0) break; } return pay; }
+function tierInfo(qty){ const q=qty||0; if(q<300) return {n:1, rate:0.15, next:300, nextRate:0.20}; if(q<1000) return {n:2, rate:0.20, next:1000, nextRate:0.25}; return {n:3, rate:0.25, next:0, nextRate:0}; }
+function ctOf(e){ return ((e&&e.contract)||{}).type||'basic'; }
+function ctBonus(e){ return (ctOf(e)==='coinvest'?TERMS.coBonus:0)+(e&&e.rerun?TERMS.rerun:0); }
+function payoutOf(e, qty){ if(ctOf(e)==='direct') return null; return tierPay(e.price, qty==null?(e.sold||0):qty, ctBonus(e)); }
+function gateSt(e,k){ const g=((e&&e.gates)||{})[k], a=((e&&e.approvals)||{})[k]; if(a && (!g || (a.at||0)>=(g.at||0))) return a.d==='ok'?'ok':'fix'; if(g && g.st==='review') return 'review'; return 'todo'; }
+function gatePill(st){ const x=GST[st]||GST.todo; return `<span class="pill ${x[1]}">${x[0]}</span>`; }
+function qualityTrack(e){
+  if(!e.gates) return `<section><div class="sec-t">품질 관문</div><div class="card small">이전 시험 에디션이라 품질 관문 기록이 없어요.</div></section>`;
+  const okN=GATES.filter(([k])=>gateSt(e,k)==='ok').length;
+  return `<section><div class="sec-t">품질 관문 · 크리에이터가 승인해야 다음 단계로</div><div class="card" style="padding:6px 12px">${GATES.map(([k,n])=>`<div class="row between" style="padding:6px 0;border-bottom:1px solid #EEE9E0"><span class="small"><b style="color:var(--ink)">${n}</b></span>${gatePill(gateSt(e,k))}</div>`).join('')}<div class="tiny" style="margin-top:6px">${okN}/6 승인 · ${TERMS.warrantyDays}일 품질 보증 (교환·환불은 플랫폼 부담)</div></div></section>`;
+}
+async function sha16(s){ const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,16); }
+function termsCanon(e, type){ return JSON.stringify({v:TERMS.version, tiers:TERMS.tiers.map(t=>[t[0]>=1e12?'inf':t[0],t[1]]), rerun:TERMS.rerun, coBonus:TERMS.coBonus, coShare:TERMS.coShare, directFee:TERMS.directFee, directMin:TERMS.directMin, settleDays:TERMS.settleDays, lateRate:TERMS.lateRate, auditGap:TERMS.auditGap, warrantyDays:TERMS.warrantyDays, type, title:e.title, product:e.product, price:e.price, goal:e.goal}); }
+function termsHash(e, type){ return sha16(termsCanon(e, type)); }
+function termSheetHtml(e, type, hash){ const c=CT[type]||CT.basic; return `<h3>조건 요약서 <span class="pill">시험 · 법적 효력 없음</span></h3><div class="card small" style="color:var(--ink);padding:6px 10px"><table>
+<tr><td style="width:76px"><b>제품·방식</b></td><td>${esc(e.title)} ${P(e.product).name} · ${c.n} · 목표 ${e.goal}개 · 판매가 ${won(e.price)}</td></tr>
+<tr><td><b>몫</b></td><td>${esc(c.d)}</td></tr>
+<tr><td><b>정산</b></td><td>발송 완료 후 ${TERMS.settleDays}일 안 · 항목별 정산서 · 늦으면 연 ${TERMS.lateRate*100}% 지연이자 · 세금 공제 내역 표시</td></tr>
+<tr><td><b>품질</b></td><td>사양서·최종 샘플·출고 승인권 · 골든 샘플 보관 · ${TERMS.warrantyDays}일 품질 보증 · 제조 결함 책임은 플랫폼</td></tr>
+<tr><td><b>공개</b></td><td>실시간 판매 화면 · 견적서·세금계산서·검사 보고서 공유 · 에디션마다 장부 열람 1회</td></tr>
+<tr><td><b>권리</b></td><td>이름·얼굴은 이 에디션에만 · 금형·디자인 인수권 · 독점은 같은 제품군·판매 기간만</td></tr>
+<tr><td><b>해지·분쟁</b></td><td>선주문 전 해지 자유(기본형 비용 0원) · 구체적 해지 사유와 시정 기회 · 조정 후 중재 · 말로 한 약속은 효력 없음</td></tr>
+</table><div class="tiny" style="margin-top:6px">표준 조건표 ${TERMS.version} · 조건 지문 <b>${hash||'계산 중…'}</b> (판매가·목표·조건표가 바뀌면 지문도 바뀌어요)</div></div><button class="btn w full" onclick="document.getElementById('modal').classList.remove('on')" style="margin-top:10px">닫기</button>`; }
+async function logE(id, what){ try{ await addDoc(collection(db,'editions',id,'log'), {uid:S.user.uid, who:S.isAdmin?'운영자':'크리에이터', what:String(what).slice(0,200), at:serverTimestamp()}); }catch(err){} }
+
+/* 표준 조건표 · 몫 계산기 */
+function calcTypes(x){
+  const q=x.qty, sup=x.price/1.1*q, shipRev=3000/1.1*q, pg=(x.price+3000)*0.032*q, cogs=x.unit*q, ful=x.shipCost*q;
+  const ret=q*(0.04*(x.shipCost+1100+0.5*x.unit)+0.02*(x.unit+x.shipCost)+300);
+  const pool=sup+shipRev-pg-cogs-x.setup-x.photo-ful-ret, rb=x.rerun?TERMS.rerun:0, atRisk=x.setup*0.6+x.photo;
+  const basic=tierPay(x.price,q,rb), co=tierPay(x.price,q,TERMS.coBonus+rb), fee=Math.max(TERMS.directFee*sup, TERMS.directMin);
+  return { sup, pool, rows:[
+    {k:'basic', creator:basic, invest:0, fail:0, plat:pool-basic},
+    {k:'coinvest', creator:co, invest:TERMS.coShare*(cogs+x.setup+x.photo), fail:TERMS.coShare*atRisk, plat:pool-co},
+    {k:'direct', creator:pool-fee, invest:cogs+x.setup+x.photo, fail:atRisk, plat:fee},
+    {k:'external', creator:basic, invest:0, fail:0, plat:pool-basic}
+  ]};
+}
+function viewTerms(){
+  const x={price:39000, qty:500, unit:9000, setup:800000, photo:350000, shipCost:3500, rerun:false};
+  const F=[['price','판매가 (원, 부가세 포함)',1000],['qty','판매 수량 (개)',10],['unit','개당 원가 (원, 부가세 별도)',100],['setup','샘플·개발·검사 비용 (원)',10000],['photo','촬영·광고 (원)',10000],['shipCost','출고비 (원/건)',100]];
+  V().innerHTML=`<section><div class="kick">표준 조건표 <span class="pill o">확정 전 초안</span></div><h2>몫은 협상하지 않아요.<br>모두에게 같은 표로 정해요.</h2><p class="sub">크리에이터는 위험을 얼마나 질지 고르고, 판매량이 늘면 몫이 자동으로 올라가요. ${TERMS.version}</p></section>
+  <section><div class="sec-t">판매량 구간 (기본형)</div><div class="card" style="padding:4px 12px"><table><tr><th>누적 판매</th><th class="r">그 구간 몫</th></tr><tr><td>1~300개</td><td class="r"><b>15%</b></td></tr><tr><td>301~1,000개</td><td class="r"><b>20%</b></td></tr><tr><td>1,001개부터</td><td class="r"><b>25%</b></td></tr><tr><td>같은 제품 재주문</td><td class="r"><b>+3%p</b></td></tr><tr><td>공동 투자형</td><td class="r"><b>+5%p</b></td></tr></table><div class="tiny" style="margin-top:6px">세금 구간처럼 각 구간 수량에만 그 요율이 붙어요. 판매가(부가세 포함) 기준이고, 판매 화면에서 자동으로 계산돼요.</div></div></section>
+  <section><div class="sec-t">계약 방식 4가지</div>${Object.entries(CT).map(([k,c])=>`<div class="card"><div class="row between"><b>${c.n}</b><span class="pill">${c.s}</span></div><div class="small" style="margin-top:4px">${c.d}</div></div>`).join('')}</section>
+  <section><div class="sec-t">내 몫 계산기</div><div class="card">${F.map(([k,l,st])=>`<label class="field"><span>${l}</span><input type="number" inputmode="numeric" id="tc_${k}" value="${x[k]}" step="${st}" min="0"></label>`).join('')}<label class="small" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="tc_rerun"> 같은 제품 재주문 (+3%p)</label></div><div id="tcOut"></div></section>
+  <section><div class="sec-t">의심하지 않아도 되게, 장치 10가지</div><div class="card small">${TRUST.map((t,i)=>`<div style="padding:5px 0"><b style="color:var(--ink)">${i+1}. ${t[0]}</b> · ${t[1]}</div>`).join('')}</div></section>
+  <section><div class="sec-t">품질 관문 6단계</div><div class="card small">${GATES.map(([k,n,dsc])=>`<div style="padding:4px 0"><b style="color:var(--ink)">${n}</b> · ${dsc}</div>`).join('')}</div></section>
+  <section><div class="sec-t">조건표 변경 이력</div><div class="card small">v1 초안 · 2026.11.6 · 처음 공개 (확정 전, 변호사 검토 전)<br>조건표가 바뀌면 여기에 남기고, 이미 계약한 크리에이터에게는 더 유리한 쪽을 적용해요.</div></section>${S.profile&&has('make')?'<a class="btn o full" href="#/new/edition">이 조건으로 에디션 만들기</a>':''}${beta()}`;
+  const out=()=>{ const r=calcTypes(x), eff=tierPay(x.price,x.qty,x.rerun?TERMS.rerun:0)/((x.price*x.qty)||1)*100; const el=document.getElementById('tcOut'); if(!el) return; el.innerHTML=`<div class="card" style="padding:4px 10px;margin-top:8px"><table><tr><th>방식</th><th class="r">크리에이터 받는 돈</th><th class="r">투자금</th><th class="r">미달 시 손실</th><th class="r">플랫폼 몫*</th></tr>${r.rows.map(w=>`<tr><td>${CT[w.k].n}</td><td class="r"><b>${mw(w.creator)}</b></td><td class="r">${w.invest?mw(w.invest):'0원'}</td><td class="r">${w.fail?mw(w.fail):'0원'}</td><td class="r">${mw(w.plat)}</td></tr>`).join('')}</table><div class="tiny" style="margin-top:6px">기본형 실효 몫 ${eff.toFixed(1)}% · 공급가 ${mw(r.sup)} · 실비를 뺀 이익 ${mw(r.pool)}<br>* 플랫폼 몫은 인건비·고정비를 빼기 전이에요. 우리가 얼마 남기는지도 보여 드려요. 반품·검품·결제 수수료·구매자 배송비 3,000원은 가정으로 넣었어요.</div></div>`; };
+  F.forEach(([k])=>{ const el=document.getElementById('tc_'+k); el.oninput=ev=>{ x[k]=Math.max(0,+ev.target.value||0); out(); }; });
+  document.getElementById('tc_rerun').onchange=ev=>{ x.rerun=ev.target.checked; out(); };
+  out();
+}
+
+/* 크리에이터 에디션 관리 (크리에이터·운영자) */
+function viewManage(id){
+  V().innerHTML='<div class="loading">불러오는 중…</div>';
+  const uid=S.user.uid; let E=null, LED=[], SET=[], REQ=[], LOG=[], on=false;
+  const ed=()=>doc(db,'editions',id), col=n=>collection(db,'editions',id,n);
+  const draw=()=>{
+    const e=E; if(!e) return; const mine=e.ownerId===uid, adm=S.isAdmin, ct=ctOf(e), c=CT[ct]||CT.basic;
+    const sold=e.sold||0, ti=tierInfo(sold), pay=payoutOf(e), payGoal=payoutOf(e, e.goal), pct=Math.min(100,Math.round(sold/(e.goal||1)*100));
+    const ledSum=LED.reduce((s,l)=>s+(+l.amount||0),0), sup=e.price/1.1*sold, shipRev=3000/1.1*sold;
+    const directNow = sup+shipRev-ledSum-Math.max(TERMS.directFee*sup, TERMS.directMin);
+    const shipAt=tsMs(e.shippedAt), due=shipAt? shipAt+TERMS.settleDays*86400000 : 0, paid=SET.filter(s=>s.paid).reduce((s,x)=>s+(+x.amount||0),0);
+    const expect = ct==='direct'? directNow : (pay||0);
+    const lateDays = (due && Date.now()>due && paid<expect) ? Math.floor((Date.now()-due)/86400000) : 0;
+    const lateInt = lateDays? Math.max(0,expect-paid)*TERMS.lateRate*lateDays/365 : 0;
+    const legacy=!e.gates;
+    const gateRows=GATES.map(([k,n,dsc])=>{ const st=gateSt(e,k), g=(e.gates||{})[k]||{}, a=(e.approvals||{})[k]||{};
+      const ev=(g.note||g.url)?`<div class="tiny" style="margin-top:3px">운영자 증빙 (${fmtD(g.at)}): ${esc(g.note||'')}${g.url?` · <a href="${esc(g.url)}" target="_blank" rel="noopener">자료 보기</a>`:''}</div>`:'';
+      const cr=a.d?`<div class="tiny">크리에이터 (${fmtD(a.at)}): ${a.d==='ok'?'승인':'수정 요청'}${a.note?' · '+esc(a.note):''}</div>`:'';
+      const b1=(mine && g.st==='review' && st!=='ok')?`<button class="btn s" data-ap="${k}">승인</button> <button class="btn w s" data-fx="${k}">수정 요청</button>`:'';
+      const b2=adm&&!legacy?`<button class="btn w s" data-ev="${k}">증빙 올리기</button>`:'';
+      return `<div style="padding:8px 0;border-bottom:1px solid #EEE9E0"><div class="row between"><b>${n}</b>${gatePill(st)}</div><div class="tiny">${dsc}</div>${ev}${cr}${(b1||b2)?`<div style="margin-top:6px">${b1} ${b2}</div>`:''}</div>`; }).join('');
+    const openBox = e.status==='prep' ? (gateSt(e,'golden')==='ok' ? (mine?'<button class="btn o full" id="mOpen" style="margin-top:10px">선주문 열기 (2주)</button>':'<div class="note" style="margin-top:8px">최종 샘플 승인됨 · 크리에이터가 선주문을 열 수 있어요.</div>') : '<div class="note" style="margin-top:8px">③ 최종 샘플을 승인하면 선주문을 열 수 있어요.</div>') : '';
+    V().innerHTML=`<div class="row between" style="margin-top:14px"><a class="small" href="${adm&&!mine?'#/admin':'#/mine'}" style="text-decoration:none">← ${adm&&!mine?'운영':'내 현황'}</a><a class="small" href="#/p/${e.id}">공개 화면</a></div>
+    <section>${statusPill(e)} <span class="pill">${c.n}</span>${adm?' <span class="pill b">운영자 보기</span>':''}<h2 style="margin:8px 0 2px">${esc(e.title)} ${P(e.product).name}</h2><div class="small">${esc(e.handle||e.ownerName)} · 판매가 ${won(e.price)} · 목표 ${e.goal}개</div></section>
+    <section><div class="sec-t">실시간 판매</div><div class="card"><div class="row between"><b>${sold}개 주문</b><span class="small">목표 ${e.goal}개</span></div><div class="bar${sold>=e.goal?' g':''}" style="height:11px"><i style="width:${pct}%"></i></div>
+      <div class="small" style="margin-top:6px">지금 ${ti.n}구간 (${Math.round(ti.rate*100)}%${ctBonus(e)?' +'+Math.round(ctBonus(e)*100)+'%p':''})${ti.next?` · ${ti.next-sold}개 더 팔리면 ${Math.round(ti.nextRate*100)}% 구간`:' · 최고 구간'}</div></div>
+      <div class="res" style="margin-top:8px"><div class="tiny">${ct==='direct'?'지금 기준 내 이익 (매출 − 장부 실비 − 운영 수수료)':'지금까지 판매분 내 몫 (구간 누진 자동 계산)'}</div><div class="big">${mw(expect)}</div><div class="tiny">${ct==='direct'?'원가 장부가 채워질수록 정확해져요':'목표 '+e.goal+'개를 채우면 '+mw(payGoal)+' · 실효 '+(sold?((pay||0)/(e.price*sold)*100).toFixed(1):'-')+'%'}</div></div></section>
+    <section><div class="sec-t">품질 관문 · 크리에이터 승인</div><div class="card" style="padding:4px 12px">${legacy?`<div class="small" style="padding:8px 0">이전 시험 에디션이라 품질 관문 기록이 없어요.${adm?' <button class="btn w s" id="mInit">품질 관문 시작</button>':''}</div>`:gateRows}</div>${openBox}</section>
+    <section><div class="sec-t">정산</div><div class="card small"><div>정산 예정일: <b style="color:var(--ink)">${due?fmtD(due).split(' ')[0]+' (발송 후 '+TERMS.settleDays+'일)':'발송 완료 후 '+TERMS.settleDays+'일 안'}</b></div><div>지급된 금액: <b style="color:var(--ink)">${won(paid)}</b>${lateDays?` · <b style="color:#B5432F">${lateDays}일 늦음 → 지연이자 ${won(lateInt)} (연 ${TERMS.lateRate*100}%, 자동 계산)</b>`:''}</div>${SET.length?'<div style="margin-top:6px">'+SET.map(s=>`<div class="tiny">${fmtD(s.at)} · ${s.paid?'지급':'예정'} ${won(s.amount)}${s.note?' · '+esc(s.note):''}</div>`).join('')+'</div>':''}</div>${adm?'<button class="btn w full" id="mSet" style="margin-top:8px">정산 기록 추가 (운영자)</button>':''}</section>
+    <section><div class="sec-t">계약</div><div class="card"><div class="row between"><b>${c.n}</b><span class="pill">${c.s}</span></div><div class="small" style="margin-top:4px">${c.d}</div><div class="tiny" style="margin-top:6px">표준 조건표 ${esc((e.contract||{}).version||'-')} · 동의 ${fmtD((e.contract||{}).agreedAt)}${(e.contract||{}).agreedBy?' · '+esc(e.contract.agreedBy):''}</div><div class="tiny" id="hashBox">조건 지문 확인 중…</div><button class="btn w s" id="mSheet" style="margin-top:8px">조건 요약서 보기</button></div></section>
+    <section><div class="sec-t">원가 공개 장부</div><div class="card" style="padding:4px 12px">${LED.length?`<table><tr><th>항목</th><th class="r">금액</th></tr>${LED.map(l=>`<tr><td>${esc(l.kind)}${l.vendor?' · '+esc(l.vendor):''}<div class="tiny">${esc(l.note||'')}${l.url?` · <a href="${esc(l.url)}" target="_blank" rel="noopener">증빙</a>`:''} · ${fmtD(l.at)}</div></td><td class="r">${won(l.amount)}</td></tr>`).join('')}<tr><td><b>합계 (부가세 별도)</b></td><td class="r"><b>${won(ledSum)}</b></td></tr></table>`:'<div class="small" style="padding:8px 0">아직 올라온 원가 자료가 없어요. 견적서·세금계산서·검사 보고서가 생기면 여기에 올라와요.</div>'}</div>${adm?'<button class="btn w full" id="mLed" style="margin-top:8px">원가 항목 추가 (운영자)</button>':''}</section>
+    <section><div class="sec-t">요청</div>${mine?`<div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn w s" data-rq="audit">장부 열람 요청</button><button class="btn w s" data-rq="question">질문하기</button>${e.status==='prep'?'<button class="btn w s" data-rq="terminate">선주문 전 해지</button>':''}</div>`:''}<div style="margin-top:8px">${REQ.length?REQ.map(r=>`<div class="card small"><div class="row between"><b style="color:var(--ink)">${RTYPES[r.type]||esc(r.type)}</b><span class="pill ${r.status==='done'?'g':'o'}">${r.status==='done'?'답변 완료':'접수'}</span></div>${r.note?'<div>'+esc(r.note)+'</div>':''}${r.answer?'<div class="tiny" style="margin-top:4px">답변: '+esc(r.answer)+'</div>':''}<div class="tiny">${fmtD(r.createdAt)}</div>${adm&&r.status!=='done'?`<button class="btn w s" data-an="${r.id}" style="margin-top:6px">답변하기 (운영자)</button>`:''}</div>`).join(''):'<div class="small">요청이 없어요. 장부 열람은 에디션마다 1번, 비용 없이 할 수 있어요.</div>'}</div></section>
+    ${adm?`<section><div class="sec-t">운영자 · 진행 단계</div><div class="row" style="gap:6px;flex-wrap:wrap">${[['closed','마감'],['making','생산 중'],['shipped','발송 완료'],['refunded','미달 환불']].map(([k,n])=>`<button class="btn w s" data-stt="${k}">${n}</button>`).join('')}</div><div class="tiny" style="margin-top:4px">발송 완료는 ⑤ 출고 승인 뒤에만 돼요.</div></section>`:''}
+    <section><div class="sec-t">변경 이력 (지울 수 없어요)</div><div class="card small">${LOG.length?LOG.map(l=>`<div style="padding:3px 0">${fmtD(l.at)} · <b style="color:var(--ink)">${esc(l.who||'')}</b> ${esc(l.what||'')}</div>`).join(''):'기록이 없어요.'}</div></section>${beta()}`;
+    bindM(e, mine, adm);
+    termsHash(e, ct).then(h=>{ const hb=document.getElementById('hashBox'); if(!hb) return; const st=(e.contract||{}).hash; hb.innerHTML = !st ? `조건 지문 ${h} · 이전 시험 에디션이라 동의 기록이 없어요` : st===h ? `조건 지문 <b>${h}</b> · 계약 때와 같아요` : `<b style="color:#B5432F">조건 지문이 계약 때(${esc(st)})와 달라요 (지금 ${h})</b> · 판매가·목표·조건표가 바뀌었는지 확인하세요${mine&&e.status==='prep'?' <button class="btn w s" id="mReAg">바뀐 조건에 다시 동의</button>':''}`; const ra=document.getElementById('mReAg'); if(ra) ra.onclick=async()=>{ try{ await updateDoc(ed(),{contract:{...(e.contract||{}), version:TERMS.version, hash:h, agreedAt:Date.now()}}); logE(id,'바뀐 조건에 다시 동의 (지문 '+h+')'); toast('다시 동의했어요'); }catch(err){ toast('실패: '+err.message); } }; }).catch(()=>{});
+  };
+  const bindM=(e, mine, adm)=>{
+    const q=s=>document.querySelectorAll(s);
+    q('[data-ap]').forEach(b=>b.onclick=()=>decide(b.dataset.ap,'ok'));
+    q('[data-fx]').forEach(b=>b.onclick=()=>decide(b.dataset.fx,'fix'));
+    q('[data-ev]').forEach(b=>b.onclick=()=>evSheet(b.dataset.ev));
+    q('[data-rq]').forEach(b=>b.onclick=()=>reqSheet(b.dataset.rq));
+    q('[data-an]').forEach(b=>b.onclick=()=>ansSheet(b.dataset.an));
+    q('[data-stt]').forEach(b=>b.onclick=async()=>{ const k=b.dataset.stt; if(k==='shipped' && gateSt(e,'ship')!=='ok' && e.gates){ toast('⑤ 출고 승인 전에는 발송 처리할 수 없어요'); return; } try{ await updateDoc(ed(), k==='shipped'?{status:k, shippedAt:Date.now()}:{status:k}); logE(id,'진행 단계 → '+(STATUS[k]||[k])[0]); toast('바꿨어요'); }catch(err){ toast('실패: '+err.message); } });
+    const g=i=>document.getElementById(i);
+    if(g('mOpen')) g('mOpen').onclick=async()=>{ g('mOpen').disabled=true; try{ await updateDoc(ed(),{status:'pre', deadline:Date.now()+14*86400000, openedAt:Date.now()}); logE(id,'최종 샘플 승인 뒤 선주문 열기 (2주)'); toast('선주문을 열었어요'); }catch(err){ g('mOpen').disabled=false; toast('실패: '+err.message); } };
+    if(g('mInit')) g('mInit').onclick=async()=>{ try{ await updateDoc(ed(),{gates:Object.fromEntries(GATES.map(([k])=>[k,{st:'todo'}])), approvals:{}}); logE(id,'품질 관문 시작'); }catch(err){ toast('실패: '+err.message); } };
+    if(g('mSheet')) g('mSheet').onclick=async()=>{ sheet(termSheetHtml(e, ctOf(e), (e.contract||{}).hash||await termsHash(e, ctOf(e)))); };
+    if(g('mLed')) g('mLed').onclick=ledSheet;
+    if(g('mSet')) g('mSet').onclick=setSheet;
+  };
+  function decide(k, d){ const n=GATES.find(x=>x[0]===k)[1];
+    sheet(`<h3>${n} ${d==='ok'?'승인':'수정 요청'}</h3><p class="small">${d==='ok'?'승인하면 다음 단계로 넘어가요. 승인 기록은 지울 수 없어요.':'무엇을 고쳐야 하는지 적어 주세요. 운영자가 고친 뒤 다시 확인을 요청해요.'}</p><label class="field"><span>${d==='ok'?'메모 (선택)':'고칠 점'}</span><textarea id="dcN" rows="3"></textarea></label><button class="btn ${d==='ok'?'o':''} full" id="dcOk">${d==='ok'?'승인하기':'수정 요청 보내기'}</button><button class="btn w full" id="dcX" style="margin-top:8px">닫기</button>`);
+    document.getElementById('dcX').onclick=closeSheet;
+    document.getElementById('dcOk').onclick=async()=>{ const note=document.getElementById('dcN').value.trim().slice(0,300); if(d==='fix'&&!note){ toast('고칠 점을 적어 주세요'); return; } try{ await updateDoc(ed(),{['approvals.'+k]:{d, note, at:Date.now()}}); logE(id, n+' '+(d==='ok'?'승인':'수정 요청')+(note?' · '+note:'')); closeSheet(); toast(d==='ok'?'승인했어요':'수정을 요청했어요'); }catch(err){ toast('실패: '+err.message); } };
+  }
+  function evSheet(k){ const n=GATES.find(x=>x[0]===k)[1], gg=((E.gates||{})[k])||{};
+    sheet(`<h3>${n} 증빙 올리기</h3><label class="field"><span>내용 (샘플 설명·검사 결과·불량률 등)</span><textarea id="evN" rows="3">${esc(gg.note||'')}</textarea></label><label class="field"><span>자료 링크 (사진·보고서, 선택)</span><input id="evU" value="${esc(gg.url||'')}"></label><button class="btn o full" id="evOk">올리고 크리에이터에게 확인 요청</button><button class="btn w full" id="evX" style="margin-top:8px">닫기</button>`);
+    document.getElementById('evX').onclick=closeSheet;
+    document.getElementById('evOk').onclick=async()=>{ const note=document.getElementById('evN').value.trim().slice(0,500), url=document.getElementById('evU').value.trim().slice(0,300); if(!note){ toast('내용을 적어 주세요'); return; } try{ await updateDoc(ed(),{['gates.'+k]:{st:'review', note, url, at:Date.now()}}); logE(id, n+' 증빙 올리고 확인 요청'); closeSheet(); toast('확인을 요청했어요'); }catch(err){ toast('실패: '+err.message); } };
+  }
+  function ledSheet(){
+    sheet(`<h3>원가 항목 추가</h3><label class="field"><span>종류</span><select id="lgK">${LKINDS.map(k=>`<option>${k}</option>`).join('')}</select></label><label class="field"><span>거래처</span><input id="lgV" maxlength="40"></label><label class="field"><span>금액 (원, 부가세 별도)</span><input id="lgA" type="number" inputmode="numeric" min="0"></label><label class="field"><span>메모 (수량·단가 등)</span><input id="lgN" maxlength="120"></label><label class="field"><span>증빙 링크 (선택)</span><input id="lgU" maxlength="300"></label><button class="btn o full" id="lgOk">장부에 올리기</button><button class="btn w full" id="lgX" style="margin-top:8px">닫기</button>`);
+    document.getElementById('lgX').onclick=closeSheet;
+    document.getElementById('lgOk').onclick=async()=>{ const kind=document.getElementById('lgK').value, vendor=document.getElementById('lgV').value.trim(), amount=Math.round(+document.getElementById('lgA').value||0), note=document.getElementById('lgN').value.trim(), url=document.getElementById('lgU').value.trim(); if(!amount){ toast('금액을 넣어 주세요'); return; } try{ await addDoc(col('ledger'),{kind, vendor, amount, note, url, at:Date.now(), by:S.user.uid}); logE(id,'원가 장부에 '+kind+' '+won(amount)+' 올림'); closeSheet(); toast('올렸어요'); }catch(err){ toast('실패: '+err.message); } };
+  }
+  function setSheet(){
+    sheet(`<h3>정산 기록 추가</h3><label class="field"><span>금액 (원)</span><input id="stA" type="number" inputmode="numeric" min="0"></label><label class="small" style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" id="stP" checked> 지급 완료</label><label class="field"><span>메모 (원천징수 등 공제 내역)</span><input id="stN" maxlength="120"></label><button class="btn o full" id="stOk">기록하기</button><button class="btn w full" id="stX" style="margin-top:8px">닫기</button>`);
+    document.getElementById('stX').onclick=closeSheet;
+    document.getElementById('stOk').onclick=async()=>{ const amount=Math.round(+document.getElementById('stA').value||0), paidF=document.getElementById('stP').checked, note=document.getElementById('stN').value.trim(); if(!amount){ toast('금액을 넣어 주세요'); return; } try{ await addDoc(col('settlements'),{amount, paid:paidF, note, at:Date.now(), by:S.user.uid}); logE(id,'정산 '+(paidF?'지급':'예정')+' '+won(amount)+' 기록'); closeSheet(); toast('기록했어요'); }catch(err){ toast('실패: '+err.message); } };
+  }
+  function reqSheet(type){
+    sheet(`<h3>${RTYPES[type]}</h3><p class="small">${type==='audit'?'에디션마다 1번, 내가 정한 회계사가 장부를 확인할 수 있어요. 3% 넘게 불리한 차이가 나오면 열람 비용은 플랫폼이 내고 차액을 지급해요.':type==='terminate'?'선주문 전이라 기본형은 비용 없이 해지돼요. 해지하면 이 에디션은 닫혀요.':'궁금한 점을 적어 주세요. 답변은 이 화면에 남아요.'}</p><label class="field"><span>내용</span><textarea id="rqN" rows="3"></textarea></label><button class="btn o full" id="rqOk">보내기</button><button class="btn w full" id="rqX" style="margin-top:8px">닫기</button>`);
+    document.getElementById('rqX').onclick=closeSheet;
+    document.getElementById('rqOk').onclick=async()=>{ const note=document.getElementById('rqN').value.trim().slice(0,500); try{ await addDoc(col('requests'),{uid:S.user.uid, type, note, status:'new', createdAt:serverTimestamp()}); if(type==='terminate'){ await updateDoc(ed(),{status:'cancelled', cancelledAt:Date.now()}); } logE(id, RTYPES[type]+(note?' · '+note:'')); closeSheet(); toast('보냈어요'); }catch(err){ toast('실패: '+err.message); } };
+  }
+  function ansSheet(rid){
+    sheet(`<h3>답변하기</h3><label class="field"><span>답변</span><textarea id="anN" rows="4"></textarea></label><button class="btn o full" id="anOk">답변 남기고 완료</button><button class="btn w full" id="anX" style="margin-top:8px">닫기</button>`);
+    document.getElementById('anX').onclick=closeSheet;
+    document.getElementById('anOk').onclick=async()=>{ const answer=document.getElementById('anN').value.trim().slice(0,800); if(!answer){ toast('답변을 적어 주세요'); return; } try{ await updateDoc(doc(db,'editions',id,'requests',rid),{status:'done', answer, answeredAt:Date.now()}); logE(id,'요청에 답변'); closeSheet(); toast('답변했어요'); }catch(err){ toast('실패: '+err.message); } };
+  }
+  sub(onSnapshot(ed(), d=>{
+    if(!d.exists()){ V().innerHTML='<div class="empty" style="margin-top:30px">찾을 수 없는 에디션이에요.</div>'; return; }
+    E={id:d.id,...d.data()};
+    if(E.ownerId!==uid && !S.isAdmin){ V().innerHTML=`<div class="empty" style="margin-top:30px">이 화면은 이 에디션의 크리에이터와 운영자만 볼 수 있어요.<br><a href="#/p/${id}">공개 화면 보기</a></div>`; return; }
+    if(!on){ on=true;
+      sub(onSnapshot(query(col('ledger'), orderBy('at','desc')), s=>{ LED=s.docs.map(x=>({id:x.id,...x.data()})); draw(); }, ()=>{}));
+      sub(onSnapshot(query(col('settlements'), orderBy('at','desc')), s=>{ SET=s.docs.map(x=>({id:x.id,...x.data()})); draw(); }, ()=>{}));
+      sub(onSnapshot(query(col('requests'), orderBy('createdAt','desc')), s=>{ REQ=s.docs.map(x=>({id:x.id,...x.data()})); draw(); }, ()=>{}));
+      sub(onSnapshot(query(col('log'), orderBy('at','desc'), limit(60)), s=>{ LOG=s.docs.map(x=>({id:x.id,...x.data()})); draw(); }, ()=>{}));
+    }
+    draw();
+  }));
+}
+
+/* 운영자 전용 섭외 화면 · 계약 방식 비교 */
+function crmV3(x){ const v=x.v3; if(!v) return '';
+  if(!v.inModel) return `<section><div class="sec-t">8. 계약 방식 비교 (v3.0)</div><div class="card small">${esc(v.note||'비용 모델 43개 밖이에요.')}</div></section>`;
+  return `<section><div class="sec-t">8. 계약 방식 비교 (v3.0 비용 모델 · 가정)</div><div class="card small">권장안: 판매가 ${won(v.price)} · 목표 ${nf(v.qty)}개 · 품질 반영 원가 ${won(v.unitQ)} · 품질 관리비 ${won(v.qcFix)} · 실질 이익 ${mw(v.real)} (${v.margin}%) · 등급 ${esc(v.grade)} · 권장가 ${won(v.rec)}</div><div class="card" style="padding:4px 10px"><table><tr><th>방식</th><th class="r">크리에이터</th><th class="r">투자금</th><th class="r">미달 손실</th><th class="r">우리 이익</th></tr><tr><td>기본형</td><td class="r">${mw(v.t1c)} (${v.eff}%)</td><td class="r">0원</td><td class="r">0원</td><td class="r">${mw(v.t1o)}</td></tr><tr><td>공동 투자형</td><td class="r">${mw(v.t2c)}</td><td class="r">${mw(v.t2i)}</td><td class="r">${mw(v.t2f)}</td><td class="r">${mw(v.t2o)}</td></tr><tr><td>직접 투자형</td><td class="r">${mw(v.t3c)}</td><td class="r">${mw(v.t3i)}</td><td class="r">${mw(v.t3f)}</td><td class="r">${mw(v.t3o)}</td></tr></table><div class="tiny" style="margin-top:4px">크리에이터 기대 수익(성공 85%) 기본 ${mw(v.e1)} · 공동 ${mw(v.e2)} · 직접 ${mw(v.e3)} → ${esc(v.best)}이 가장 커요 · 우리 이익은 인건비를 뺀 실질 이익</div></div></section>`;
 }
 
 /* ---------- 시작 ---------- */
